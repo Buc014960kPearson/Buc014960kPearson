@@ -66,6 +66,7 @@ jobs:
           yarn start
 
       - name: Step 2 - Continue
+        timeout-minutes: 1
         run: |
           echo $IP
           ping $IP
