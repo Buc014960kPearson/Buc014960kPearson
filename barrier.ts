@@ -64,7 +64,7 @@ async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
       return false
     } else {
       console.error('Patch error', err.message)
-      throw err
+      throw new Error('Patch error')
     }
   }
 }
