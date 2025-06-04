@@ -10,7 +10,7 @@ if (!gistId || !token || !matrixId || !total) {
   process.exit(1)
 }
 
-const headers = {
+const headersBase = {
   Authorization: `token ${token}`,
   Accept: 'application/vnd.github.v3+json',
 }
@@ -18,18 +18,30 @@ const headers = {
 const url = `https://api.github.com/gists/${gistId}`
 const filename = 'matrix-barrier.json'
 
-async function getArrived(): Promise<string[]> {
-  const res = await axios.get(url, { headers })
-  const fileContent = res.data.files[filename]?.content || '{"arrived":[]}'
-  try {
-    const data = JSON.parse(fileContent)
-    return data.arrived || []
-  } catch {
-    return []
-  }
+interface ArrivedData {
+  arrived: string[]
 }
 
-async function updateArrived(arrived: string[]): Promise<void> {
+async function fetchGist(): Promise<{ arrived: string[], etag: string }> {
+  const res = await axios.get(url, {
+    headers: headersBase,
+  })
+
+  const fileContent = res.data.files[filename]?.content || '{"arrived":[]}'
+  const etag = res.headers.etag || ''
+  let arrived: string[] = []
+
+  try {
+    const parsed: ArrivedData = JSON.parse(fileContent)
+    arrived = parsed.arrived || []
+  } catch (e) {
+    console.error('Failed to parse Gist content')
+  }
+
+  return { arrived, etag }
+}
+
+async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
   const newContent = {
     files: {
       [filename]: {
@@ -37,23 +49,42 @@ async function updateArrived(arrived: string[]): Promise<void> {
       },
     },
   }
-  await axios.patch(url, newContent, { headers })
+
+  try {
+    await axios.patch(url, newContent, {
+      headers: {
+        ...headersBase,
+        'If-Match': etag,
+      },
+    })
+    return true
+  } catch (err: any) {
+    if (err.response?.status === 412) {
+      // ETag 不匹配
+      return false
+    } else {
+      console.error('Patch error', err.message)
+      throw err
+    }
+  }
 }
 
-async function registerWithRetry(retry = 5): Promise<void> {
-  while (retry-- > 0) {
-    const arrived = await getArrived()
+async function registerSafely(maxRetries = 10) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const { arrived, etag } = await fetchGist()
+
     if (arrived.includes(matrixId)) {
       return
     }
 
-    const updated = [...arrived, matrixId]
-    try {
-      await updateArrived(updated)
+    const newArrived = [...new Set([...arrived, matrixId])]
+    const success = await tryPatch(newArrived, etag)
+    if (success) {
+      console.log(`[${matrixId}] Registered successfully`)
       return
-    } catch (err) {
-      console.warn(`[${matrixId}] Patch failed, retrying... (${retry} left)`)
-      await new Promise((r) => setTimeout(r, 1000))
+    } else {
+      console.log(`[${matrixId}] Conflict detected. Retrying... (${attempt + 1})`)
+      await new Promise(r => setTimeout(r, 500 + Math.random() * 500)) // jitter
     }
   }
 
@@ -61,22 +92,24 @@ async function registerWithRetry(retry = 5): Promise<void> {
   process.exit(1)
 }
 
-async function waitForOthers(): Promise<void> {
-  await registerWithRetry()
+async function waitForOthers() {
+  await registerSafely()
 
   while (true) {
-    const arrived = await getArrived()
-    if (arrived.length >= total) {
+    const { arrived } = await fetchGist()
+    const count = arrived.length
+
+    if (count >= total) {
       console.log(`[${matrixId}] All jobs arrived. Proceeding.`)
       break
     }
 
-    console.log(`[${matrixId}] Waiting... (${arrived.length}/${total})`)
-    await new Promise((r) => setTimeout(r, 3000))
+    console.log(`[${matrixId}] Waiting... (${count}/${total})`)
+    await new Promise(r => setTimeout(r, 3000))
   }
 }
 
-waitForOthers().catch((err) => {
+waitForOthers().catch(err => {
   console.error(err)
   process.exit(1)
 })
