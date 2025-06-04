@@ -76,4 +76,5 @@ jobs:
           yarn start
 
       - name: Step 2 - Continue
-        run: echo "Job ${{ matrix.job }} passed barrier and is continuing"
+        run: |
+          ping $IP
