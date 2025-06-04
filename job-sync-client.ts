@@ -1,9 +1,31 @@
+import * as util from 'util';
+import * as moment from 'moment';
 import { io, Socket } from 'socket.io-client';
+
+Date.prototype[util.inspect.custom] = function () {
+  return moment(this).format('YYYY-MM-DD HH:mm:ss.SSS');
+};
+
+Date.prototype.toString = function () {
+  return moment(this).format('YYYY-MM-DD HH:mm:ss.SSS');
+};
+
+const log = console.log;
+console.log = function (...args) {
+  log("log:", new Date(), ...args);
+  // log(new Error().stack.split('\n')[2]);
+};
+
+const error = console.error;
+console.error = function (...args) {
+  error("error:", new Date(), ...args);
+  error(new Error().stack.split('\n').slice(2).join('\n'));
+};
 
 const matrixId = process.env.MATRIX_JOB;
 const total = Number(process.env.TOTAL_JOBS);
 const runId = process.env.GITHUB_RUN_ID;
-const serverUrl = process.env.SOCKET_SERVER_URL || 'http://localhost:3000';
+const serverUrl = process.env.SOCKET_SERVER_URL;
 
 console.log("matrixId", matrixId);
 console.log("total", total);
