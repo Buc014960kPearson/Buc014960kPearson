@@ -61,6 +61,8 @@ io.on('connection', (socket) => {
 
       if (state.arrived.size >= state.total) {
         io.emit(`ready:${runId}`);
+        runs.delete(runId); // ✅ 到达后清除状态
+        console.log(`🧹 [${runId}] 状态已清除`);
       }
     }
   );
