@@ -27,22 +27,29 @@ async function fetchGist(): Promise<{ arrived: string[], etag: string }> {
     headers: headersBase,
   })
 
-  const fileContent = res.data.files[filename]?.content || '{"arrived":[]}'
+  const files = res.data.files
+  const file = files[filename]
+  if (!file) {
+    console.error(`⛔ 文件 "${filename}" 不存在于指定 Gist 中，请确认名字拼写是否正确`)
+    process.exit(1)
+  }
+
+  const fileContent = file.content || '{"arrived":[]}'
   const etag = res.headers.etag || ''
   let arrived: string[] = []
 
   try {
     const parsed: ArrivedData = JSON.parse(fileContent)
     arrived = parsed.arrived || []
-  } catch (e) {
-    console.error('Failed to parse Gist content')
+  } catch {
+    console.warn('⚠️ 无法解析 JSON，默认空列表')
   }
 
   return { arrived, etag }
 }
 
 async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
-  const newContent = {
+  const body = {
     files: {
       [filename]: {
         content: JSON.stringify({ arrived }, null, 2),
@@ -51,7 +58,7 @@ async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
   }
 
   try {
-    await axios.patch(url, newContent, {
+    await axios.patch(url, body, {
       headers: {
         ...headersBase,
         'If-Match': etag,
@@ -59,13 +66,15 @@ async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
     })
     return true
   } catch (err: any) {
-    if (err.response?.status === 412) {
-      // ETag 不匹配
-      return false
+    if (err.response) {
+      console.error(
+        `Patch error ${err.response.status}: ${err.response.statusText}`,
+        err.response.data
+      )
     } else {
-      console.error('Patch error', err.message)
-      throw new Error('Patch error')
+      console.error(`Patch error:`, err.message)
     }
+    return false
   }
 }
 
@@ -83,7 +92,7 @@ async function registerSafely(maxRetries = 10) {
       console.log(`[${matrixId}] Registered successfully`)
       return
     } else {
-      console.log(`[${matrixId}] Conflict detected. Retrying... (${attempt + 1})`)
+      console.log(`[${matrixId}] Conflict or error. Retrying... (${attempt + 1})`)
       await new Promise(r => setTimeout(r, 500 + Math.random() * 500)) // jitter
     }
   }
