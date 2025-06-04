@@ -10,7 +10,7 @@ jobs:
   test:
     strategy:
       matrix:
-        job: [1, 2, 3, 4, 5]
+        job: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     runs-on: ubuntu-latest
     env:
       GIST_ID: 3550e7eaeee9fc6ac1f22e8d79e791e0
