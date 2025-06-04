@@ -2,8 +2,12 @@ name: Matrix Barrier Demo
 
 on: [push]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  matrix:
+  test:
     strategy:
       matrix:
         job: [1, 2, 3, 4, 5]
@@ -33,6 +37,7 @@ jobs:
 
       - name: Barrier sync
         run: 
+          node --version
           yarn
           yarn start
 
