@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+    image: appdeployer/job-sync-server
+    restart: unless-stopped
+    environment:
+      TZ: "Asia/Shanghai"
+    ports:
+      - "3000:80"

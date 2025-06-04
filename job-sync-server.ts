@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
   );
 });
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = 80;
 server.listen(PORT, () => {
   console.log(`🚀 Socket.IO 服务运行在 http://localhost:${PORT}`);
 });
