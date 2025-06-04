@@ -10,7 +10,7 @@ if (!gistId || !token || !matrixId || !total) {
   process.exit(1)
 }
 
-const headersBase = {
+const headers = {
   Authorization: `token ${token}`,
   Accept: 'application/vnd.github.v3+json',
 }
@@ -18,37 +18,25 @@ const headersBase = {
 const url = `https://api.github.com/gists/${gistId}`
 const filename = 'matrix-barrier.json'
 
-interface ArrivedData {
-  arrived: string[]
-}
+async function fetchArrived(): Promise<string[]> {
+  const res = await axios.get(url, { headers })
 
-async function fetchGist(): Promise<{ arrived: string[], etag: string }> {
-  const res = await axios.get(url, {
-    headers: headersBase,
-  })
-
-  const files = res.data.files
-  const file = files[filename]
+  const file = res.data.files?.[filename]
   if (!file) {
-    console.error(`⛔ 文件 "${filename}" 不存在于指定 Gist 中，请确认名字拼写是否正确`)
+    console.error(`⛔ Gist 中找不到文件: ${filename}`)
     process.exit(1)
   }
 
-  const fileContent = file.content || '{"arrived":[]}'
-  const etag = res.headers.etag || ''
-  let arrived: string[] = []
-
   try {
-    const parsed: ArrivedData = JSON.parse(fileContent)
-    arrived = parsed.arrived || []
+    const content = JSON.parse(file.content)
+    return content.arrived || []
   } catch {
-    console.warn('⚠️ 无法解析 JSON，默认空列表')
+    console.warn('⚠️ JSON 解析失败，重置为空')
+    return []
   }
-
-  return { arrived, etag }
 }
 
-async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
+async function updateArrived(arrived: string[]): Promise<boolean> {
   const body = {
     files: {
       [filename]: {
@@ -58,67 +46,57 @@ async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
   }
 
   try {
-    await axios.put(url, body, {
-      headers: {
-        ...headersBase,
-        'If-Match': etag,
-      },
-    })
+    await axios.patch(url, body, { headers })
     return true
   } catch (err: any) {
-    if (err.response) {
-      console.error(
-        `Patch error ${err.response.status}: ${err.response.statusText}`,
-        err.response.data
-      )
-    } else {
-      console.error(`Patch error:`, err.message)
-    }
+    console.error(`⚠️ PATCH 失败: ${err.response?.status} ${err.response?.statusText}`)
     return false
   }
 }
 
-async function registerSafely(maxRetries = 10) {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    const { arrived, etag } = await fetchGist()
-
+async function registerWithRetry(maxRetries = 10) {
+  for (let i = 0; i < maxRetries; i++) {
+    const arrived = await fetchArrived()
     if (arrived.includes(matrixId)) {
+      console.log(`[${matrixId}] 已经注册，无需重复`)
       return
     }
 
-    const newArrived = [...new Set([...arrived, matrixId])]
-    const success = await tryPatch(newArrived, etag)
+    const merged = Array.from(new Set([...arrived, matrixId]))
+
+    const success = await updateArrived(merged)
     if (success) {
-      console.log(`[${matrixId}] Registered successfully`)
+      console.log(`[${matrixId}] 成功注册`)
       return
     } else {
-      console.log(`[${matrixId}] Conflict or error. Retrying... (${attempt + 1})`)
-      await new Promise(r => setTimeout(r, 500 + Math.random() * 500)) // jitter
+      const wait = 500 + Math.random() * 500
+      console.log(`[${matrixId}] 写入失败，${Math.round(wait)}ms 后重试 (${i + 1}/${maxRetries})`)
+      await new Promise(r => setTimeout(r, wait))
     }
   }
 
-  console.error(`[${matrixId}] Failed to register after retries`)
+  console.error(`[${matrixId}] 重试多次后仍然失败，退出`)
   process.exit(1)
 }
 
 async function waitForOthers() {
-  await registerSafely()
+  await registerWithRetry()
 
   while (true) {
-    const { arrived } = await fetchGist()
+    const arrived = await fetchArrived()
     const count = arrived.length
 
     if (count >= total) {
-      console.log(`[${matrixId}] All jobs arrived. Proceeding.`)
+      console.log(`[${matrixId}] 全部 ${count}/${total} 到达，继续执行`)
       break
     }
 
-    console.log(`[${matrixId}] Waiting... (${count}/${total})`)
+    console.log(`[${matrixId}] 等待中... (${count}/${total})`)
     await new Promise(r => setTimeout(r, 3000))
   }
 }
 
 waitForOthers().catch(err => {
-  console.error(err)
+  console.error('❌ 程序异常终止:', err)
   process.exit(1)
 })
