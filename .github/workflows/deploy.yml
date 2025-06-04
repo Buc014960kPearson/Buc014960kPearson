@@ -15,7 +15,7 @@ jobs:
     env:
       # GIST_ID: 3550e7eaeee9fc6ac1f22e8d79e791e0
       # GIST_TOKEN: PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj
-      TOTAL_JOBS: 5
+      TOTAL_JOBS: 10
       MATRIX_JOB: ${{ matrix.job }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:
