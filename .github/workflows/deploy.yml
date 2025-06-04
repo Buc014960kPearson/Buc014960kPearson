@@ -68,4 +68,5 @@ jobs:
       - name: Step 2 - Continue
         run: |
           echo $IP
+          ping $IP
           # sudo hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
