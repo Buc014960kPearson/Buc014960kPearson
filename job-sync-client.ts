@@ -86,10 +86,12 @@ async function waitForAll(): Promise<void> {
   });
 }
 
-waitForAll().catch((err) => {
-  console.error('❌ 执行出错', err);
-  process.exit(1);
-});
+if (require.main === module) {
+    waitForAll().catch((err) => {
+      console.error('❌ 执行出错', err);
+      process.exit(1);
+    });
+  }
 
 
 
