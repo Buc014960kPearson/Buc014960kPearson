@@ -75,8 +75,8 @@ jobs:
 
           yarn start
 
-          ping $IP
 
-      # - name: Step 2 - Continue
-      #   run: |
-      #     ping $IP
+      - name: Step 2 - Continue
+        run: |
+          echo $IP
+          ping $IP
