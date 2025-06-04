@@ -1,46 +1,46 @@
-name: Phased Concurrent Jobs Workflow
+name: Matrix Barrier Demo
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  setup:
+  test:
+    strategy:
+      matrix:
+        job: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     runs-on: ubuntu-latest
+    env:
+      GIST_ID: 3550e7eaeee9fc6ac1f22e8d79e791e0
+      GIST_TOKEN: PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj
+      TOTAL_JOBS: 5
+      MATRIX_JOB: ${{ matrix.job }}
     steps:
-      - name: Checkout code
+      # - name: Setup Node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18
+
+      # - name: Install dependencies
+      #   run: yarn global add ts-node axios
+
+      # - name: Download barrier script
+      #   run: curl -fsSL https://gist.githubusercontent.com/yourname/abcdef1234567890abcdef1234567890/raw/barrier.ts -o barrier.ts
+
+      - name: 检出代码
         uses: actions/checkout@v4
-      - name: Persist Runner ID
-        run: echo "RUNNER_ID=${{ runner.name }}" >> $GITHUB_ENV
 
-  phase1:
-    needs: setup
-    runs-on: ${{ needs.setup.outputs.runner_id }}
-    strategy:
-      matrix:
-        job: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    steps:
-      - name: Phase 1 - Job ${{ matrix.job }}
-        run: |
-          echo "Running Phase 1 for Job ${{ matrix.job }} on ${{ runner.name }}"
-          sleep $((RANDOM % 10 + 5))  # Simulate work with random delay (5-14 seconds)
-          echo "Phase 1 for Job ${{ matrix.job }} completed"
-    outputs:
-      runner_id: ${{ env.RUNNER_ID }}
+      - name: Step 1 - Prepare
+        run: echo "Job ${{ matrix.job }} doing prepare step"
 
-  phase2:
-    needs: phase1
-    runs-on: ${{ needs.phase1.outputs.runner_id }}
-    strategy:
-      matrix:
-        job: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    steps:
-      - name: Phase 2 - Job ${{ matrix.job }}
+      - name: Barrier sync
         run: |
-          echo "Running Phase 2 for Job ${{ matrix.job }} on ${{ runner.name }}"
-          sleep $((RANDOM % 10 + 5))  # Simulate work with random delay (5-14 seconds)
-          echo "Phase 2 for Job ${{ matrix.job }} completed"
+          node --version
+          yarn --version
+          yarn
+          yarn start
+
+      - name: Step 2 - Continue
+        run: echo "Job ${{ matrix.job }} passed barrier and is continuing"
