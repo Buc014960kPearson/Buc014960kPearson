@@ -1,0 +1,40 @@
+name: Matrix Barrier Demo
+
+on: [push]
+
+jobs:
+  matrix:
+    strategy:
+      matrix:
+        job: [1, 2, 3, 4, 5]
+    runs-on: ubuntu-latest
+    env:
+      GIST_ID: 01b9f5a6600ab5ce161a9a46a9935606
+      GIST_TOKEN: PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj
+      TOTAL_JOBS: 5
+      MATRIX_JOB: ${{ matrix.job }}
+    steps:
+      # - name: Setup Node
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: 18
+
+      # - name: Install dependencies
+      #   run: yarn global add ts-node axios
+
+      # - name: Download barrier script
+      #   run: curl -fsSL https://gist.githubusercontent.com/yourname/abcdef1234567890abcdef1234567890/raw/barrier.ts -o barrier.ts
+
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Step 1 - Prepare
+        run: echo "Job ${{ matrix.job }} doing prepare step"
+
+      - name: Barrier sync
+        run: 
+          yarn
+          yarn start
+
+      - name: Step 2 - Continue
+        run: echo "Job ${{ matrix.job }} passed barrier and is continuing"
