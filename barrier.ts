@@ -6,97 +6,97 @@ const matrixId = process.env.MATRIX_JOB
 const total = Number(process.env.TOTAL_JOBS)
 
 if (!gistId || !token || !matrixId || !total) {
-  console.error('Missing environment variables')
+  console.error('❌ 缺少环境变量')
   process.exit(1)
 }
 
 const headers = {
-  Authorization: `token ${token}`,
+  Authorization: `token ghp_${process.env.GIST_TOKEN}`,
   Accept: 'application/vnd.github.v3+json',
 }
 
 const url = `https://api.github.com/gists/${gistId}`
 const filename = 'matrix-barrier.json'
 
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 async function fetchArrived(): Promise<string[]> {
-  const res = await axios.get(url, { headers })
-
-  const file = res.data.files?.[filename]
-  if (!file) {
-    console.error(`⛔ Gist 中找不到文件: ${filename}`)
-    process.exit(1)
-  }
-
   try {
-    const content = JSON.parse(file.content)
-    return content.arrived || []
-  } catch {
-    console.warn('⚠️ JSON 解析失败，重置为空')
+    const res = await axios.get(url, { headers })
+    const file = res.data.files?.[filename]
+    if (!file) {
+      console.error(`❌ Gist 中不存在文件 ${filename}`)
+      process.exit(1)
+    }
+
+    const content = JSON.parse(file.content || '{}')
+    return Array.isArray(content.arrived) ? content.arrived : []
+  } catch (err) {
+    console.error('❌ 获取 Gist 内容失败', err)
     return []
   }
 }
 
-async function updateArrived(arrived: string[]): Promise<boolean> {
-  const body = {
-    files: {
-      [filename]: {
-        content: JSON.stringify({ arrived }, null, 2),
-      },
-    },
-  }
-
-  try {
-    await axios.patch(url, body, { headers })
-    return true
-  } catch (err: any) {
-    console.error(`⚠️ PATCH 失败: ${err.response?.status} ${err.response?.statusText}`)
-    return false
-  }
-}
-
-async function registerWithRetry(maxRetries = 10) {
-  for (let i = 0; i < maxRetries; i++) {
+async function safeRegister(retries = 10): Promise<void> {
+  for (let i = 0; i < retries; i++) {
     const arrived = await fetchArrived()
+
     if (arrived.includes(matrixId)) {
-      console.log(`[${matrixId}] 已经注册，无需重复`)
+      console.log(`[${matrixId}] 已在列表中`)
       return
     }
 
     const merged = Array.from(new Set([...arrived, matrixId]))
 
-    const success = await updateArrived(merged)
-    if (success) {
-      console.log(`[${matrixId}] 成功注册`)
+    const body = {
+      files: {
+        [filename]: {
+          content: JSON.stringify({ arrived: merged }, null, 2),
+        },
+      },
+    }
+
+    try {
+      await axios.patch(url, body, { headers })
+      console.log(`[${matrixId}] 成功注册 (写入 ${merged.length} 项)`)
       return
-    } else {
-      const wait = 500 + Math.random() * 500
-      console.log(`[${matrixId}] 写入失败，${Math.round(wait)}ms 后重试 (${i + 1}/${maxRetries})`)
-      await new Promise(r => setTimeout(r, wait))
+    } catch (err) {
+      console.warn(`[${matrixId}] PATCH 写入失败，重试中 (${i + 1}/${retries})`)
+      await sleep(500 + Math.random() * 500)
     }
   }
 
-  console.error(`[${matrixId}] 重试多次后仍然失败，退出`)
+  console.error(`[${matrixId}] 写入重试失败，放弃`)
   process.exit(1)
 }
 
-async function waitForOthers() {
-  await registerWithRetry()
+async function waitForAll() {
+  await safeRegister()
 
   while (true) {
     const arrived = await fetchArrived()
-    const count = arrived.length
+    const current = arrived.length
 
-    if (count >= total) {
-      console.log(`[${matrixId}] 全部 ${count}/${total} 到达，继续执行`)
-      break
+    if (arrived.includes(matrixId)) {
+      if (current >= total) {
+        console.log(`[${matrixId}] 所有任务已到达 (${current}/${total})，继续执行`)
+        break
+      } else {
+        console.log(`[${matrixId}] 等待其他任务 (${current}/${total})`)
+      }
+    } else {
+      // 如果当前不在列表中（被覆盖了），重新注册
+      console.warn(`[${matrixId}] 被覆盖，重新注册`)
+      await safeRegister()
     }
 
-    console.log(`[${matrixId}] 等待中... (${count}/${total})`)
-    await new Promise(r => setTimeout(r, 3000))
+    await sleep(3000)
   }
 }
 
-waitForOthers().catch(err => {
-  console.error('❌ 程序异常终止:', err)
+waitForAll().catch(err => {
+  console.error('❌ 执行出错', err)
   process.exit(1)
 })
