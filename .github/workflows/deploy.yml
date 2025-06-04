@@ -36,7 +36,7 @@ jobs:
         run: echo "Job ${{ matrix.job }} doing prepare step"
 
       - name: Barrier sync
-        run: 
+        run: |
           node --version
           yarn --version
           yarn
