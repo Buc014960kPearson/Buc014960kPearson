@@ -38,6 +38,7 @@ jobs:
       - name: Barrier sync
         run: 
           node --version
+          yarn --version
           yarn
           yarn start
 
