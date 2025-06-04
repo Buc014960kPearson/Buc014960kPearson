@@ -7,26 +7,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  dev:
-    runs-on: ubuntu-latest
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+  # dev:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: 检出代码
+  #       uses: actions/checkout@v4
 
-      - name: 登录到Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: appdeployer
-          password: llq335432723931
+  #     - name: 登录到Docker Hub
+  #       uses: docker/login-action@v3
+  #       with:
+  #         username: appdeployer
+  #         password: llq335432723931
 
-      - name: 测试
-        run: |
-          curl -L "https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
-          
-          yarn
-          yarn global add pkg
-          yarn build && docker-compose push
+  #     - name: 测试
+  #       run: |
+  #         curl -L "https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  #         chmod +x /usr/local/bin/docker-compose
+
+  #         yarn
+  #         yarn global add pkg
+  #         yarn build && docker-compose push
 
   test:
     strategy:
