@@ -7,6 +7,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 登录到Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: appdeployer
+          password: llq335432723931
+
+      - name: 测试
+        run: |
+          yarn
+          yarn build && docker-compose push
+
   test:
     strategy:
       matrix:
