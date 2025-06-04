@@ -22,6 +22,7 @@ jobs:
       - name: 测试
         run: |
           yarn
+          yarn global add pkg
           yarn build && docker-compose push
 
   test:
