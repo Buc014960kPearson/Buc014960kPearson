@@ -58,7 +58,7 @@ async function tryPatch(arrived: string[], etag: string): Promise<boolean> {
   }
 
   try {
-    await axios.patch(url, body, {
+    await axios.put(url, body, {
       headers: {
         ...headersBase,
         'If-Match': etag,
