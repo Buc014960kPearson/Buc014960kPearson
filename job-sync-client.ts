@@ -2,8 +2,12 @@ import { io, Socket } from 'socket.io-client';
 
 const matrixId = process.env.MATRIX_JOB;
 const total = Number(process.env.TOTAL_JOBS);
-const runId = process.env.RUN_ID || process.env.GITHUB_RUN_ID;
+const runId = process.env.GITHUB_RUN_ID;
 const serverUrl = process.env.SOCKET_SERVER_URL || 'http://localhost:3000';
+
+console.log("matrixId", matrixId);
+console.log("total", total);
+console.log("runId", runId);
 
 if (!matrixId || !total || !runId) {
   console.error('❌ 缺少环境变量 MATRIX_JOB、TOTAL_JOBS 或 RUN_ID');
@@ -64,3 +68,6 @@ waitForAll().catch((err) => {
   console.error('❌ 执行出错', err);
   process.exit(1);
 });
+
+
+
