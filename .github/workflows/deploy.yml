@@ -77,8 +77,8 @@ jobs:
           # IP=43.132.229.248
           echo "IP=$IP" >> $GITHUB_ENV
 
-          sudo apt install speedtest-cli
-          sudo speedtest-cli
+          # sudo apt install speedtest-cli
+          # sudo speedtest-cli
 
           echo $IP
 
