@@ -77,7 +77,7 @@ jobs:
           echo "IP=$IP" >> $GITHUB_ENV
 
           sudo apt install speedtest-cli
-          speedtest-cli
+          sudo speedtest-cli
 
           yarn start
 
