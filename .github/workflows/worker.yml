@@ -1,11 +1,11 @@
 name: Worker Job
 
-on:
-  workflow_call:
-    inputs:
-      combos:
-        required: true
-        type: string # JSON 字符串
+# on:
+#   workflow_call:
+#     inputs:
+#       combos:
+#         required: true
+#         type: string # JSON 字符串
 
 jobs:
   run-matrix:

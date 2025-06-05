@@ -1,13 +1,13 @@
 name: Matrix Barrier Demo
 
-# on: [push2]
+on: [push]
 
-on:
-  workflow_call:
-    # inputs:
-    #   combos:
-    #     required: true
-    #     type: string # JSON 字符串
+# on:
+#   workflow_call:
+#     # inputs:
+#     #   combos:
+#     #     required: true
+#     #     type: string # JSON 字符串
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
