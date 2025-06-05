@@ -7,30 +7,30 @@ on:
 
 jobs:
   call-worker-1:
-    uses: ./.github/workflows/worker.yml
-    with:
-      combos: |
-        [
-          { "region": "us-east", "service": "auth", "env": "dev" },
-          { "region": "us-east", "service": "auth", "env": "staging" },
-          { "region": "us-east", "service": "billing", "env": "prod" }
-        ]
+    uses: ./.github/workflows/deploy.yml
+    # with:
+    #   combos: |
+    #     [
+    #       { "region": "us-east", "service": "auth", "env": "dev" },
+    #       { "region": "us-east", "service": "auth", "env": "staging" },
+    #       { "region": "us-east", "service": "billing", "env": "prod" }
+    #     ]
 
   call-worker-2:
-    uses: ./.github/workflows/worker.yml
-    with:
-      combos: |
-        [
-          { "region": "eu-central", "service": "auth", "env": "dev" },
-          { "region": "eu-central", "service": "billing", "env": "staging" },
-          { "region": "eu-central", "service": "analytics", "env": "prod" }
-        ]
+    uses: ./.github/workflows/deploy.yml
+    # with:
+    #   combos: |
+    #     [
+    #       { "region": "eu-central", "service": "auth", "env": "dev" },
+    #       { "region": "eu-central", "service": "billing", "env": "staging" },
+    #       { "region": "eu-central", "service": "analytics", "env": "prod" }
+    #     ]
 
   call-worker-3:
-    uses: ./.github/workflows/worker.yml
-    with:
-      combos: |
-        [
-          { "region": "ap-southeast", "service": "search", "env": "test" },
-          { "region": "ap-southeast", "service": "user", "env": "prod" }
-        ]
+    uses: ./.github/workflows/deploy.yml
+    # with:
+    #   combos: |
+    #     [
+    #       { "region": "ap-southeast", "service": "search", "env": "test" },
+    #       { "region": "ap-southeast", "service": "user", "env": "prod" }
+    #     ]
