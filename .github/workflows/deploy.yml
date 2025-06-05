@@ -83,4 +83,4 @@ jobs:
         run: |
           echo $IP
           # ping $IP
-          timeout 10s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
+          sudo timeout 10s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
