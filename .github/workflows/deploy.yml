@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TOTAL_JOBS: 40
-      MATRIX_JOB: ${{ matrix.job }} + ${{ matrix.test_level_2025 }}
+      MATRIX_JOB: ${{ matrix.job }}_${{ matrix.test_level_2025 }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:
       - name: 检出代码
