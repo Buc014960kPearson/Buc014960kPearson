@@ -72,7 +72,8 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=125.77.20.66
+          # IP=125.77.20.66
+          IP=8.210.211.97
           echo "IP=$IP" >> $GITHUB_ENV
 
           sudo apt install speedtest-cli
