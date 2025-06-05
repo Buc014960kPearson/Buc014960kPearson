@@ -1,6 +1,6 @@
 name: Matrix Barrier Demo
 
-on: [push]
+on: [push2]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
