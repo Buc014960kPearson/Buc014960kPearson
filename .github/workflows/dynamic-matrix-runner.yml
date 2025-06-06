@@ -41,7 +41,7 @@ jobs:
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
     env:
-      GITHUB_RUN_ID: ${{ inputs.run_id || github.run_id }}
+      RUN_ID: ${{ inputs.run_id || github.run_id }}
       TOTAL_JOBS: ${{ inputs.total_jobs }}
       MATRIX_JOB_ID: ${{ matrix.job }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
