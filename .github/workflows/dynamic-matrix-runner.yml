@@ -7,6 +7,9 @@ on:
       count:
         required: true
         type: string
+      run_id:
+        required: false
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,6 +37,7 @@ jobs:
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
     env:
+      GITHUB_RUN_ID: ${{ inputs.run_id || github.run_id }}
       MATRIX_JOB_COUNT: ${{ inputs.count }}
       MATRIX_JOB_ID: ${{ toJSON(matrix) }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
