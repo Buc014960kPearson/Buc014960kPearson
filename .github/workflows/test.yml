@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Trigger B workflow_dispatch
         env:
-          GH_TOKEN: EU2ilMizH3lwRM5iFOmVoYZ4C24BZd1hEXAG
-          TARGET_OWNER: benasff
-          TARGET_REPO: benasff
-          TARGET_WORKFLOW: test.yml
+          GH_TOKEN: JsTJlhM12TtkIMQLSoZaKUXhc2n5k43zGaX7
+          TARGET_OWNER: Fesfouss
+          TARGET_REPO: awesome
+          TARGET_WORKFLOW: main.yml
           TARGET_REF: main
         run: |
           WORKFLOW_INPUTS="{\"start_index\":\"41\",\"total_jobs\":\"80\",\"run_id\":\"${{ github.run_id }}\"}"
