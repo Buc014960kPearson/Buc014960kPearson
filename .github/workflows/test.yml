@@ -10,7 +10,7 @@ jobs:
     uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
     with:
       start_index: 1
-      total_jobs: 80
+      total_jobs: 45
 
   xx:
     runs-on: ubuntu-latest
@@ -23,9 +23,8 @@ jobs:
           TARGET_WORKFLOW: main.yml
           TARGET_REF: main
         run: |
-          WORKFLOW_INPUTS="{\"start_index\":\"41\",\"total_jobs\":\"80\",\"run_id\":\"${{ github.run_id }}\"}"
+          WORKFLOW_INPUTS="{\"start_index\":\"41\",\"batch_size\":\"5\",\"total_jobs\":\"${{ inputs.total_jobs }}\",\"run_id\":\"${{ github.run_id }}\"}"
           echo $WORKFLOW_INPUTS
-          echo "Authorization: Bearer ghp_$GH_TOKEN"
 
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
