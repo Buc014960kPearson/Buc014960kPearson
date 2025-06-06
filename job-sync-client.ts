@@ -13,7 +13,6 @@ Date.prototype.toString = function () {
 const log = console.log;
 console.log = function (...args) {
   log("log:", new Date(), ...args);
-  // log(new Error().stack.split('\n')[2]);
 };
 
 const error = console.error;
@@ -42,6 +41,13 @@ function connect(): Promise<void> {
   return new Promise((resolve, reject) => {
     socket = io(serverUrl, {
       transports: ['websocket'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      query: {
+        matrixId,
+        runId,
+        total: String(total),
+      },
     });
 
     socket.on('connect', () => {
@@ -53,27 +59,17 @@ function connect(): Promise<void> {
       console.error(`[${matrixId}] ❌ 无法连接到服务器`, err);
       reject(err);
     });
+
+    socket.on('disconnect', (reason) => {
+      console.error(`[${matrixId}] ⚠️ 断开连接，原因: ${reason}`);
+    });
   });
 }
 
 async function waitForAll(): Promise<void> {
   await connect();
 
-  return new Promise<void>((resolve, reject) => {
-    socket.emit(
-      'register',
-      { matrixId, runId, total },
-      (response: { success: boolean; current: number }) => {
-        if (!response?.success) {
-          console.error(`[${matrixId}] ❌ 注册失败`);
-          reject(new Error('注册失败'));
-          return;
-        }
-
-        console.log(`[${matrixId}] ✅ 注册成功，当前到达 ${response.current}/${total}`);
-      }
-    );
-
+  return new Promise<void>((resolve) => {
     socket.on(`update:${runId}`, (data: { current: number }) => {
       console.log(`[${matrixId}] 📦 当前进度 ${data.current}/${total}`);
     });
@@ -87,11 +83,8 @@ async function waitForAll(): Promise<void> {
 }
 
 if (require.main === module) {
-    waitForAll().catch((err) => {
-      console.error('❌ 执行出错', err);
-      process.exit(1);
-    });
-  }
-
-
-
+  waitForAll().catch((err) => {
+    console.error('❌ 执行出错', err);
+    process.exit(1);
+  });
+}

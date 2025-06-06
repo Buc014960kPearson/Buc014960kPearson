@@ -9,63 +9,68 @@ const io = new Server(server, {
 type RunState = {
   arrived: Set<string>;
   total: number;
+  sockets: Map<string, string>;
 };
 
 const runs = new Map<string, RunState>();
 
 io.on('connection', (socket) => {
-  socket.on(
-    'register',
-    (
-      {
-        matrixId,
-        runId,
-        total,
-      }: { matrixId: string; runId: string; total: number },
-      ack: (response: { success: boolean; current: number }) => void
-    ) => {
-      if (
-        typeof matrixId !== 'string' ||
-        typeof runId !== 'string' ||
-        typeof total !== 'number' ||
-        total <= 0
-      ) {
-        ack({ success: false, current: 0 });
-        return;
-      }
+  // 从 handshake.query 获取参数
+  const { matrixId, runId, total } = socket.handshake.query as { matrixId?: string, runId?: string, total?: string };
 
-      if (!runs.has(runId)) {
-        runs.set(runId, { arrived: new Set(), total });
-      }
+  if (
+    typeof matrixId !== 'string' ||
+    typeof runId !== 'string' ||
+    typeof total !== 'string' ||
+    isNaN(Number(total)) ||
+    Number(total) <= 0
+  ) {
+    socket.disconnect(true);
+    return;
+  }
 
-      const state = runs.get(runId)!;
+  const totalNum = Number(total);
 
-      if (state.total !== total) {
-        console.error(
-          `❌ [${runId}] 冲突：已有 total=${state.total}，当前客户端传入 total=${total}`
-        );
-        ack({ success: false, current: state.arrived.size });
-        return;
-      }
+  if (!runs.has(runId)) {
+    runs.set(runId, { arrived: new Set(), total: totalNum, sockets: new Map() });
+  }
 
-      if (!state.arrived.has(matrixId)) {
-        state.arrived.add(matrixId);
-        console.log(`✅ [${runId}] ${matrixId} 到达 (${state.arrived.size}/${state.total})`);
-      } else {
-        console.log(`🔁 [${runId}] ${matrixId} 已存在`);
-      }
+  const state = runs.get(runId)!;
 
-      ack({ success: true, current: state.arrived.size });
+  if (state.total !== totalNum) {
+    console.error(`❌ [${runId}] 冲突：已有 total=${state.total}，当前客户端传入 total=${totalNum}`);
+    socket.disconnect(true);
+    return;
+  }
 
-      io.emit(`update:${runId}`, { current: state.arrived.size });
+  if (!state.arrived.has(matrixId)) {
+    state.arrived.add(matrixId);
+    state.sockets.set(matrixId, socket.id);
+    console.log(`✅ [${runId}] ${matrixId} 到达 (${state.arrived.size}/${state.total})`);
+  } else {
+    state.sockets.set(matrixId, socket.id);
+    console.log(`🔁 [${runId}] ${matrixId} 已存在`);
+  }
 
-      if (state.arrived.size >= state.total) {
-        io.emit(`ready:${runId}`);
-        runs.delete(runId); // ✅ 到达后清除状态
-        console.log(`🧹 [${runId}] 状态已清除`);
+  io.emit(`update:${runId}`, { current: state.arrived.size });
+
+  if (state.arrived.size >= state.total) {
+    io.emit(`ready:${runId}`);
+    runs.delete(runId);
+    console.log(`🧹 [${runId}] 状态已清除`);
+  }
+
+  socket.on('disconnect', () => {
+    const state = runs.get(runId);
+    if (state && state.arrived.has(matrixId)) {
+      if (state.sockets.get(matrixId) === socket.id) {
+        state.arrived.delete(matrixId);
+        state.sockets.delete(matrixId);
+        console.log(`⚠️ [${runId}] ${matrixId} 断开，当前到达数：${state.arrived.size}/${state.total}`);
+        io.emit(`update:${runId}`, { current: state.arrived.size });
       }
     }
-  );
+  });
 });
 
 const PORT = 80;
