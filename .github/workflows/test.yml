@@ -7,13 +7,7 @@ on:
         default: '45'
 
 jobs:
-  call-matrix-workflow:
-    uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
-    with:
-      start_index: 1
-      total_jobs: ${{ inputs.total_jobs }}
-
-  xx:
+  trigger-downstream-workflow:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger B workflow_dispatch
@@ -46,3 +40,10 @@ jobs:
             echo "API请求失败，退出 job"
             exit 1
           fi
+
+  call-matrix-workflow:
+    needs: trigger-downstream-workflow
+    uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
+    with:
+      start_index: 1
+      total_jobs: ${{ inputs.total_jobs }}
