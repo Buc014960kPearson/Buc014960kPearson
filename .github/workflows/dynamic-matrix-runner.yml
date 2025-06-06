@@ -39,6 +39,9 @@ jobs:
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:
       - uses: actions/checkout@v4
+        with:
+          repository: Buc014960kPearson/Buc014960kPearson
+          ref: main
 
       - name: Step 1
         run: |
