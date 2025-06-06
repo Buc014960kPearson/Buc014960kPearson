@@ -40,7 +40,6 @@ jobs:
     strategy:
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
     env:
       RUN_ID: ${{ inputs.run_id || github.run_id }}
       TOTAL_JOBS: ${{ inputs.total_jobs }}
@@ -60,10 +59,10 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=43.154.158.187
+          IP=119.28.61.198
           echo "IP=$IP" >> $GITHUB_ENV
 
-          yarn start
+          timeout 120s yarn start
 
       - name: Step 2
         run: |
