@@ -61,7 +61,7 @@ jobs:
           IP=43.135.73.113
           echo "IP=$IP" >> $GITHUB_ENV
 
-          yarn start_index
+          yarn start
 
       - name: Step 2
         run: |
