@@ -23,7 +23,7 @@ jobs:
           TARGET_WORKFLOW: test.yml
           TARGET_REF: main
         run: |
-          WORKFLOW_INPUTS="{\"start_index\":\"41\",\"total_jobs\":\"80\",\"run_id\":${{ github.run_id }}}"
+          WORKFLOW_INPUTS="{\"start_index\":\"41\",\"total_jobs\":\"80\",\"run_id\":\"${{ github.run_id }}\"}"
           echo $WORKFLOW_INPUTS
           echo "Authorization: Bearer ghp_$GH_TOKEN"
 
