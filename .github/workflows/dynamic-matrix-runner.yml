@@ -42,7 +42,7 @@ jobs:
     env:
       GITHUB_RUN_ID: ${{ inputs.run_id || github.run_id }}
       TOTAL_JOBS: ${{ inputs.total_jobs }}
-      MATRIX_JOB_ID: ${{ toJSON(matrix) }}
+      MATRIX_JOB_ID: ${{ matrix.job }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:
       - uses: actions/checkout@v4
