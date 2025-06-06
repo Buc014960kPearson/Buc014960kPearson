@@ -7,7 +7,7 @@ on:
     inputs:
       total_jobs:
         description: 'Total jobs'
-        required: true
+        required: false
         default: '45'
 
 jobs:
