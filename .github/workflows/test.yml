@@ -27,8 +27,22 @@ jobs:
           WORKFLOW_INPUTS="{\"start_index\":\"41\",\"batch_size\":\"5\",\"total_jobs\":\"${{ inputs.total_jobs }}\",\"run_id\":\"${{ github.run_id }}\"}"
           echo $WORKFLOW_INPUTS
 
-          curl -X POST \
+          # 获取响应内容和状态码
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ghp_$GH_TOKEN" \
             https://api.github.com/repos/$TARGET_OWNER/$TARGET_REPO/actions/workflows/$TARGET_WORKFLOW/dispatches \
-            -d "{\"ref\":\"$TARGET_REF\",\"inputs\":$WORKFLOW_INPUTS}"
+            -d "{\"ref\":\"$TARGET_REF\",\"inputs\":$WORKFLOW_INPUTS}")
+
+          # 分割内容与状态码
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          STATUS=$(echo "$RESPONSE" | tail -n1)
+
+          echo "Status: $STATUS"
+          echo "Body: $BODY"
+
+          # 只要不是201就退出
+          if [[ "$STATUS" != "201" ]]; then
+            echo "API请求失败，退出 job"
+            exit 1
+          fi
