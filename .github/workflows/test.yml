@@ -3,17 +3,7 @@ on:
     branches:
       - main
 
-# on:
-#   workflow_dispatch:
-#     inputs:
-#       start:
-#         description: "起始 job 编号"
-#         required: true
-#         default: "1"
-#       count:
-#         description: "job 数量"
-#         required: true
-#         default: "40"
+  workflow_dispatch
 
 jobs:
   call-matrix-workflow:
