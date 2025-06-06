@@ -22,7 +22,7 @@ jobs:
         id: set-matrix
         run: |
           jobs=$(seq ${{ inputs.start }} $((${{ inputs.start }} + ${{ inputs.count }} - 1)) | jq -R . | jq -s .)
-          echo "matrix={\"job\":$jobs}" >> $GITHUB_OUTPUT
+          printf 'matrix={"job":%s}\n' "$jobs" >> $GITHUB_OUTPUT
 
   job:
     needs: generate-matrix
