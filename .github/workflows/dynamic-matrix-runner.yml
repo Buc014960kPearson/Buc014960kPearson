@@ -5,8 +5,9 @@ on:
         required: true
         type: string
       batch_size:
-        required: true
+        required: false
         type: string
+        default: '40'
       total_jobs:
         required: true
         type: string
