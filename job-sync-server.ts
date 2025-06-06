@@ -1,5 +1,26 @@
+import * as util from 'util';
+import * as moment from 'moment';
 import { Server } from 'socket.io';
 import * as http from 'http';
+
+Date.prototype[util.inspect.custom] = function () {
+  return moment(this).format('YYYY-MM-DD HH:mm:ss.SSS');
+};
+
+Date.prototype.toString = function () {
+  return moment(this).format('YYYY-MM-DD HH:mm:ss.SSS');
+};
+
+const log = console.log;
+console.log = function (...args) {
+  log("log:", new Date(), ...args);
+};
+
+const error = console.error;
+console.error = function (...args) {
+  error("error:", new Date(), ...args);
+  error(new Error().stack.split('\n').slice(2).join('\n'));
+};
 
 const server = http.createServer();
 const io = new Server(server, {
