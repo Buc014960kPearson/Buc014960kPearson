@@ -60,7 +60,7 @@ jobs:
         # test_level_2025: [unit, e2e]
     runs-on: ubuntu-latest
     env:
-      MATRIX_JOB_COUNT: 40
+      TOTAL_JOBS: 40
       MATRIX_JOB_ID: ${{ toJSON(matrix) }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:

@@ -1,13 +1,13 @@
 on:
   workflow_call:
     inputs:
-      start:
+      start_index:
         required: true
         type: string
-      count:
+      batch_size:
         required: true
         type: string
-      job_count:
+      total_jobs:
         required: true
         type: string
       run_id:
@@ -27,10 +27,10 @@ jobs:
       - name: Generate Matrix
         id: set-matrix
         run: |
-          start=$(echo "${{ inputs.start }}" | tr -d '"')
-          count=$(echo "${{ inputs.count }}" | tr -d '"')
-          end=$((start + count - 1))
-          jobs=$(seq $start $end | jq -R . | jq -s .)
+          start_index=$(echo "${{ inputs.start_index }}" | tr -d '"')
+          batch_size=$(echo "${{ inputs.batch_size }}" | tr -d '"')
+          end=$((start_index + batch_size - 1))
+          jobs=$(seq $start_index $end | jq -R . | jq -s .)
           matrix="{\"job\":$jobs}"
           echo "matrix=$(echo $matrix | tr -d '\n')" >> $GITHUB_OUTPUT
 
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_RUN_ID: ${{ inputs.run_id || github.run_id }}
-      MATRIX_JOB_COUNT: ${{ inputs.job_count }}
+      TOTAL_JOBS: ${{ inputs.total_jobs }}
       MATRIX_JOB_ID: ${{ toJSON(matrix) }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
     steps:
@@ -61,7 +61,7 @@ jobs:
           IP=43.135.73.113
           echo "IP=$IP" >> $GITHUB_ENV
 
-          yarn start
+          yarn start_index
 
       - name: Step 2
         run: |

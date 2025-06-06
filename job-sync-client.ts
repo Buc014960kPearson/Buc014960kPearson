@@ -23,7 +23,7 @@ console.error = function (...args) {
 };
 
 const matrixId = process.env.MATRIX_JOB_ID;
-const total = Number(process.env.MATRIX_JOB_COUNT);
+const total = Number(process.env.TOTAL_JOBS);
 const runId = process.env.GITHUB_RUN_ID;
 const serverUrl = process.env.SOCKET_SERVER_URL;
 
