@@ -1,13 +1,9 @@
 on:
-  push:
-    branches:
-      - main
-
   workflow_dispatch:
     inputs:
       total_jobs:
         description: 'Total jobs'
-        required: false
+        required: true
         default: '45'
 
 jobs:
@@ -15,7 +11,7 @@ jobs:
     uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
     with:
       start_index: 1
-      total_jobs: 45
+      total_jobs: ${{ inputs.total_jobs }}
 
   xx:
     runs-on: ubuntu-latest
