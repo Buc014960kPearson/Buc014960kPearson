@@ -9,9 +9,9 @@ on:
 jobs:
   trigger-downstream-workflow:
     runs-on: ubuntu-latest
-    if: false
     steps:
       - name: Trigger B workflow_dispatch
+        if: false
         env:
           GH_TOKEN: JsTJlhM12TtkIMQLSoZaKUXhc2n5k43zGaX7
           TARGET_OWNER: Fesfouss
