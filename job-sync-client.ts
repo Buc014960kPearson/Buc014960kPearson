@@ -22,8 +22,8 @@ console.error = function (...args) {
   error(new Error().stack.split('\n').slice(2).join('\n'));
 };
 
-const matrixId = process.env.MATRIX_JOB;
-const total = Number(process.env.TOTAL_JOBS);
+const matrixId = process.env.MATRIX_JOB_ID;
+const total = Number(process.env.MATRIX_JOB_COUNT);
 const runId = process.env.GITHUB_RUN_ID;
 const serverUrl = process.env.SOCKET_SERVER_URL;
 
@@ -32,7 +32,7 @@ console.log("total", total);
 console.log("runId", runId);
 
 if (!matrixId || !total || !runId) {
-  console.error('❌ 缺少环境变量 MATRIX_JOB、TOTAL_JOBS 或 RUN_ID');
+  console.error('❌ 缺少环境变量 MATRIX_JOB_ID、MATRIX_JOB_COUNT 或 RUN_ID');
   process.exit(1);
 }
 

