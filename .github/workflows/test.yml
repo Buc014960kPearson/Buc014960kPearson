@@ -9,6 +9,7 @@ on:
 jobs:
   trigger-downstream-workflow:
     runs-on: ubuntu-latest
+    if: false
     steps:
       - name: Trigger B workflow_dispatch
         env:
