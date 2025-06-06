@@ -1,0 +1,26 @@
+name: Call Matrix Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       start:
+#         description: "起始 job 编号"
+#         required: true
+#         default: "1"
+#       count:
+#         description: "job 数量"
+#         required: true
+#         default: "40"
+
+jobs:
+  call-matrix-workflow:
+    uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
+    with:
+      start: 1
+      count: 40
+      job_count: 80
