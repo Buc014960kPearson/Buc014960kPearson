@@ -3,10 +3,10 @@ on:
     inputs:
       start:
         required: true
-        type: number
+        type: string
       count:
         required: true
-        type: number
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -21,9 +21,7 @@ jobs:
       - name: Generate Matrix
         id: set-matrix
         run: |
-          start=${{ inputs.start }}
-          count=${{ inputs.count }}
-          jobs=$(seq $start $((start+count-1)) | jq -R . | jq -s .)
+          jobs=$(seq ${{ inputs.start }} $((${{ inputs.start }} + ${{ inputs.count }} - 1)) | jq -R . | jq -s .)
           echo "matrix={\"job\":$jobs}" >> $GITHUB_OUTPUT
 
   job:
