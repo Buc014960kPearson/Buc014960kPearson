@@ -53,24 +53,22 @@ jobs:
 
       - name: Check CPU Info
         run: |
-          # lscpu
+          lscpu
           # cat /proc/cpuinfo | grep "^processor" | wc -l
           # nproc
-          sysctl net.core.wmem_max
-          cat /proc/sys/net/core/wmem_max
-          sudo sysctl -w net.core.wmem_max=16777216
+          # sysctl net.core.wmem_max
+          # cat /proc/sys/net/core/wmem_max
+          # sudo sysctl -w net.core.wmem_max=16777216
 
       - name: Step 1
         run: |
-          sysctl net.core.wmem_max
-          cat /proc/sys/net/core/wmem_max
           yarn
 
           sudo apt install hping3 -q
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=129.226.64.250
+          IP=101.32.49.32
           echo "IP=$IP" >> $GITHUB_ENV
 
           timeout 120s yarn start
