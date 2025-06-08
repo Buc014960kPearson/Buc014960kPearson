@@ -19,5 +19,8 @@ jobs:
         run: |
           # sudo iptables -L -n -v
           cat /proc/sys/net/ipv4/conf/all/rp_filter
-          sudo ufw status
+          sudo sysctl -w net.ipv4.conf.all.rp_filter=0
+          sudo sysctl -w net.ipv4.conf.default.rp_filter=0
+          sudo sysctl -w net.ipv4.conf.eth0.rp_filter=0
+          cat /proc/sys/net/ipv4/conf/all/rp_filter
           curl ipinfo.io
