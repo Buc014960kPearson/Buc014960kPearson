@@ -56,22 +56,25 @@ jobs:
 
       - name: Check CPU Info
         run: |
-          lscpu
+          # lscpu
           # cat /proc/cpuinfo | grep "^processor" | wc -l
           # nproc
+          ip link show eth0
+          sudo ip link set eth0 txqueuelen 10000
           # sysctl net.core.wmem_max
           # cat /proc/sys/net/core/wmem_max
           # sudo sysctl -w net.core.wmem_max=16777216
 
       - name: Step 1
         run: |
+          ip link show eth0
           yarn
 
           sudo apt install hping3 -q
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=101.32.49.32
+          IP=43.155.24.223
           echo "IP=$IP" >> $GITHUB_ENV
 
           timeout 120s yarn start
