@@ -10,7 +10,7 @@ jobs:
   trigger-downstream-workflow:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger B workflow_dispatch
+      - name: Trigger workflow_dispatch
         if: false
         env:
           GH_TOKEN: JsTJlhM12TtkIMQLSoZaKUXhc2n5k43zGaX7

@@ -68,7 +68,7 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=43.155.21.244
+          IP=129.226.64.250
           echo "IP=$IP" >> $GITHUB_ENV
 
           timeout 120s yarn start
