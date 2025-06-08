@@ -68,7 +68,8 @@ jobs:
           # IP=129.226.190.215
           # echo "IP=$IP" >> $GITHUB_ENV
 
-          IP_LIST = ${{ fromJson('["' + inputs.target_ips.replace(',', '","') + '"]') }}
+          # IP_LIST = ${{ fromJson('["' + inputs.target_ips.replace(',', '","') + '"]') }}
+          IP_LIST = ${{ join(split(inputs.target_ips, ','), ' ') }}
           # IP_LIST=(43.132.218.227)
           echo "IP_LIST=${IP_LIST[*]}" >> $GITHUB_ENV
 
