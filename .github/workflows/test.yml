@@ -53,6 +53,6 @@ jobs:
     uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
     with:
       start_index: 1
-      batch_size: ${{ inputs.total_jobs < '40‘ ? inputs.total_jobs : '' }}
+      batch_size: ${{ fromJson(inputs.total_jobs) < 40 && inputs.total_jobs || '' }}
       total_jobs: ${{ inputs.total_jobs }}
       run_id: ${{ inputs.run_id }}
