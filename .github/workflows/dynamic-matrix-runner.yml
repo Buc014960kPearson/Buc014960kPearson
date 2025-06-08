@@ -80,7 +80,7 @@ jobs:
           # IP=129.226.190.215
           # echo "IP=$IP" >> $GITHUB_ENV
 
-          IP_LIST=(125.77.20.66)
+          IP_LIST=(43.132.218.227)
           echo "IP_LIST=${IP_LIST[*]}" >> $GITHUB_ENV
 
           timeout 120s yarn start
