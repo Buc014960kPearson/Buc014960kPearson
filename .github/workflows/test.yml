@@ -56,3 +56,4 @@ jobs:
       batch_size: ${{ fromJson(inputs.total_jobs) < 40 && inputs.total_jobs || '' }}
       total_jobs: ${{ inputs.total_jobs }}
       run_id: ${{ inputs.run_id }}
+      target_ips: ${{ inputs.target_ips }}
