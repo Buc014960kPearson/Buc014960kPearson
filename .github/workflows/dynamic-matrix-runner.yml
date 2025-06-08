@@ -15,7 +15,7 @@ on:
         required: false
         type: string
       target_ips:
-        required: true
+        required: false
         type: string
         default: '43.135.27.118,101.32.32.133'
 
