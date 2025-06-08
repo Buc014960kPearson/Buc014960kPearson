@@ -17,5 +17,7 @@ jobs:
         #   TARGET_WORKFLOW: main.yml
         #   TARGET_REF: main
         run: |
-          sudo iptables -L -n -v
+          # sudo iptables -L -n -v
+          cat /proc/sys/net/ipv4/conf/all/rp_filter
+          sudo systemctl status firewalld
           curl ipinfo.io
