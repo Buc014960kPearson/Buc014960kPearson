@@ -8,9 +8,10 @@ on:
       run_id:
         description: 'Run ID'
         required: false
-      target_ips:
-        description: '多个ip用逗号隔开'
-        required: true
+        default: '1234567890'
+      # target_ips:
+      #   description: '多个ip用逗号隔开'
+      #   required: true
 
 jobs:
   trigger-downstream-workflow:
@@ -56,4 +57,4 @@ jobs:
       batch_size: ${{ fromJson(inputs.total_jobs) < 40 && inputs.total_jobs || '40' }}
       total_jobs: ${{ inputs.total_jobs }}
       run_id: ${{ inputs.run_id }}
-      target_ips: ${{ inputs.target_ips }}
+      # target_ips: ${{ inputs.target_ips }}
