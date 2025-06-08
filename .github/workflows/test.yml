@@ -1,10 +1,10 @@
 on:
   workflow_dispatch:
     inputs:
-      total_jobs:
-        description: 'Total jobs'
-        required: true
-        default: '45'
+      # total_jobs:
+      #   description: 'Total jobs'
+      #   required: true
+      #   default: '45'
       # run_id:
       #   description: 'Run ID'
       #   required: false
@@ -54,6 +54,6 @@ jobs:
     with:
       start_index: 1
       batch_size: ${{ fromJson(inputs.total_jobs) < 40 && inputs.total_jobs || '40' }}
-      total_jobs: ${{ inputs.total_jobs }}
+      # total_jobs: ${{ inputs.total_jobs }}
       # run_id: ${{ inputs.run_id }}
       # target_ips: ${{ inputs.target_ips }}
