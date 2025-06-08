@@ -11,7 +11,7 @@ on:
       total_jobs:
         required: false
         type: string
-        default: '80'
+        default: '120'
       run_id:
         required: false
         type: string
