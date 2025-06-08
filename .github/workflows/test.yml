@@ -5,9 +5,9 @@ on:
         description: 'Total jobs'
         required: true
         default: '45'
-      run_id:
-        description: 'Run ID'
-        required: false
+      # run_id:
+      #   description: 'Run ID'
+      #   required: false
       # target_ips:
       #   description: '多个ip用逗号隔开'
       #   required: true
@@ -55,5 +55,5 @@ jobs:
       start_index: 1
       batch_size: ${{ fromJson(inputs.total_jobs) < 40 && inputs.total_jobs || '40' }}
       total_jobs: ${{ inputs.total_jobs }}
-      run_id: ${{ inputs.run_id }}
+      # run_id: ${{ inputs.run_id }}
       # target_ips: ${{ inputs.target_ips }}
