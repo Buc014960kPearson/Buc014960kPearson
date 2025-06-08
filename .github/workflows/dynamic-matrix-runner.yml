@@ -58,10 +58,12 @@ jobs:
           # nproc
           sysctl net.core.wmem_max
           cat /proc/sys/net/core/wmem_max
-          sudo sysctl -w net.core.wmem_max=1024*1024
+          sudo sysctl -w net.core.wmem_max=16777216
 
       - name: Step 1
         run: |
+          sysctl net.core.wmem_max
+          cat /proc/sys/net/core/wmem_max
           yarn
 
           sudo apt install hping3 -q
