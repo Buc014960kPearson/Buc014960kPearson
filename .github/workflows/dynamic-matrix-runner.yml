@@ -19,7 +19,7 @@ on:
       target_ips:
         required: false
         type: string
-        default: '43.132.233.37,101.32.74.142'
+        default: '43.135.42.175,43.128.54.134'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
