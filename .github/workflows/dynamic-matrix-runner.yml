@@ -63,14 +63,9 @@ jobs:
 
           sudo apt install hping3 -q
 
-          # getent ahostsv4 ioswy.com
-          # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          # IP=129.226.190.215
-          # echo "IP=$IP" >> $GITHUB_ENV
-
-          IP_LIST = inputs.target_ips.replace(',', ' ')
-          # IP_LIST=(43.132.218.227)
-          echo "IP_LIST=${IP_LIST[*]}" >> $GITHUB_ENV
+          # 将逗号分隔的 target_ips 转换为空格分隔
+          IP_LIST=$(echo "${{ inputs.target_ips }}" | tr ',' ' ')
+          echo "IP_LIST=${IP_LIST}" >> $GITHUB_ENV
 
           timeout 120s yarn start
 
