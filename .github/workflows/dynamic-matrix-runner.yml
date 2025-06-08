@@ -30,6 +30,9 @@ jobs:
         run: |
           start_index=$(echo "${{ inputs.start_index }}" | tr -d '"')
           batch_size=$(echo "${{ inputs.batch_size }}" | tr -d '"')
+          if [ "$(expr "$total_jobs" + 0)" -lt "$(expr "$batch_size" + 0)" ]; then
+            batch_size=$total_jobs
+          fi
           end=$((start_index + batch_size - 1))
           jobs=$(seq $start_index $end | jq -R . | jq -s .)
           matrix="{\"job\":$jobs}"
