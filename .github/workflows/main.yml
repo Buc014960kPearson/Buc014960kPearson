@@ -1,9 +1,9 @@
 name: Master Workflow
 
-on:
-  workflow_dispatch:
+# on:
+#   workflow_dispatch:
 
-# on: [push]
+on: [push]
 
 jobs:
   myjob:
@@ -17,5 +17,5 @@ jobs:
         #   TARGET_WORKFLOW: main.yml
         #   TARGET_REF: main
         run: |
-
+          sudo iptables -L -n -v
           curl ipinfo.io
