@@ -19,5 +19,5 @@ jobs:
         run: |
           # sudo iptables -L -n -v
           cat /proc/sys/net/ipv4/conf/all/rp_filter
-          sudo systemctl status firewalld
+          sudo ufw status
           curl ipinfo.io
