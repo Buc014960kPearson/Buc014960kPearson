@@ -17,4 +17,5 @@ jobs:
         #   TARGET_WORKFLOW: main.yml
         #   TARGET_REF: main
         run: |
+
           curl ipinfo.io
