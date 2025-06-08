@@ -8,6 +8,9 @@ on:
       run_id:
         description: 'Run ID'
         required: false
+      target_ips:
+        description: '多个ip用逗号隔开'
+        required: true
 
 jobs:
   trigger-downstream-workflow:
