@@ -8,7 +8,6 @@ on:
       run_id:
         description: 'Run ID'
         required: false
-        default: '1234567890'
       # target_ips:
       #   description: '多个ip用逗号隔开'
       #   required: true

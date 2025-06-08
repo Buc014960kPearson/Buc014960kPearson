@@ -9,11 +9,13 @@ on:
         type: string
         default: '40'
       total_jobs:
-        required: true
+        required: false
         type: string
+        default: '80'
       run_id:
         required: false
         type: string
+        default: '1234567890'
       target_ips:
         required: false
         type: string
