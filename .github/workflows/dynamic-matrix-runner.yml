@@ -70,7 +70,7 @@ jobs:
           IP_LIST=$(echo "${{ inputs.target_ips }}" | tr ',' ' ')
           echo "IP_LIST=${IP_LIST}" >> $GITHUB_ENV
 
-          timeout 300s yarn start
+          timeout 180s yarn start
 
       - name: Step 2
         run: |
