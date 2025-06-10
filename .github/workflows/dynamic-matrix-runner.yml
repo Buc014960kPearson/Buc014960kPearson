@@ -15,7 +15,7 @@ on:
       run_id:
         required: false
         type: string
-        default: '1234567890'
+        default: ${{ github.run_id }}
       target_ips:
         required: false
         type: string
