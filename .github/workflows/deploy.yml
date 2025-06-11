@@ -42,6 +42,9 @@ jobs:
           REPO_URL_WITH_TOKEN=$(echo "$REPO_URL" | sed "s#https://#https://$TOKEN@#")
           git clone $REPO_URL_WITH_TOKEN
 
+          # 获取仓库名（去掉.git后缀）
+          REPO_NAME=$(basename "$REPO_URL" .git)
+          cd "$REPO_NAME"
           gh workflow list
-          # # gh workflow run build.yml --field start_index=300 --field batch_size=2
-          # gh workflow run build.yml
+          # gh workflow run build.yml --field start_index=300 --field batch_size=2
+          gh workflow run build.yml
