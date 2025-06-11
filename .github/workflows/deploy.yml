@@ -18,12 +18,12 @@ jobs:
             token: "UsfhASy6aZ1egMiSfwVzOJULxkjk4a3dWIGb"
           - index: 1
             token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
-          - index: 2
-            token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
-          - index: 3
-            token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
-          - index: 4
-            token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
+          # - index: 2
+          #   token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
+          # - index: 3
+          #   token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
+          # - index: 4
+          #   token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
     env:
       TZ: Asia/Shanghai
 
@@ -33,7 +33,9 @@ jobs:
         run: |
           echo "ghp_${{matrix.token}}" | gh auth login --with-token
           USERNAME=$(gh api user --jq .login)
-          REPO_URL=$(gh api "users/$USERNAME/repos?sort=pushed&direction=desc&per_page=1" --jq '.[0].clone_url')
+          echo $USERNAME
+          REPO_URL=$(gh api "users/$USERNAME/repos?sort=pushed&direction=desc&per_page=1" --jq '.[0].ssh_url')
+          echo $REPO_URL
           git clone $REPO_URL
 
           gh workflow list
