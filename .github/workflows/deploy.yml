@@ -32,7 +32,10 @@ jobs:
         shell: bash
         run: |
           echo "ghp_${{matrix.token}}" | gh auth login --with-token
+          USERNAME=$(gh api user --jq .login)
+          REPO_URL=$(gh api "users/$USERNAME/repos?sort=pushed&direction=desc&per_page=1" --jq '.[0].clone_url')
+          git clone $REPO_URL
 
           gh workflow list
-          # gh workflow run build.yml --field start_index=300 --field batch_size=2
-          gh workflow run build.yml
+          # # gh workflow run build.yml --field start_index=300 --field batch_size=2
+          # gh workflow run build.yml
