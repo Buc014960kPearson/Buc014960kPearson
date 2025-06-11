@@ -60,7 +60,13 @@ jobs:
           repository: Buc014960kPearson/Buc014960kPearson
           ref: main
 
+      - name: Step 0
+        if: false
+        run: |
+          echo "${{ github.workflow }}"
+
       - name: Step 1
+        if: false
         run: |
           yarn
 
@@ -73,6 +79,7 @@ jobs:
           timeout 180s yarn start
 
       - name: Step 2
+        if: false
         run: |
           cat /proc/sys/net/ipv4/conf/all/rp_filter
 
