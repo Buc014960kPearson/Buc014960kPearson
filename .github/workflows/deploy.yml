@@ -38,7 +38,7 @@ jobs:
           echo $TOKEN | gh auth login --with-token
           USERNAME=$(gh api user --jq .login)
           echo $USERNAME
-          REPO_URL=$(gh api 'user/repos?visibility=private&sort=pushed&direction=desc&per_page=1' --jq '.[0].clone_url')
+          REPO_URL=$(gh api 'user/repos?sort=pushed&direction=desc&per_page=1' --jq '.[0].clone_url')
           REPO_URL_WITH_TOKEN=$(echo "$REPO_URL" | sed "s#https://#https://$TOKEN@#")
           git clone $REPO_URL_WITH_TOKEN
 
