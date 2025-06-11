@@ -37,7 +37,7 @@ jobs:
           echo "ghp_${{matrix.token}}" | gh auth login --with-token
           USERNAME=$(gh api user --jq .login)
           echo $USERNAME
-          REPO_URL2=$(gh repo list $USERNAME --limit 100 --visibility private --sort pushed | head -n 1)
+          REPO_URL2=$(gh api 'user/repos?visibility=private&sort=pushed&direction=desc&per_page=1' --jq '.[0].ssh_url')
           echo $REPO_URL2
           REPO_URL=$(gh api "users/$USERNAME/repos?sort=pushed&direction=desc&per_page=1" --jq '.[0].ssh_url')
           echo $REPO_URL
