@@ -1,7 +1,7 @@
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 permissions:
@@ -19,14 +19,14 @@ jobs:
         include:
           - index: 0
             token: "UsfhASy6aZ1egMiSfwVzOJULxkjk4a3dWIGb"
-          # - index: 1
-          #   token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
-          # - index: 2
-          #   token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
-          # - index: 3
-          #   token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
-          # - index: 4
-          #   token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
+          - index: 1
+            token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
+          - index: 2
+            token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
+          - index: 3
+            token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
+          - index: 4
+            token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
     env:
       TZ: Asia/Shanghai
 
