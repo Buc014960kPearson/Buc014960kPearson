@@ -1,0 +1,18 @@
+on:
+  workflow_dispatch:
+    inputs:
+      start_index:
+        description: "起始 job 下标"
+        required: true
+        default: "1"
+      batch_size:
+        description: "每次运行的 job 数量"
+        required: true
+        default: "40"
+
+jobs:
+  job:
+    uses: Buc014960kPearson/Buc014960kPearson/.github/workflows/dynamic-matrix-runner.yml@main
+    with:
+      start_index: ${{inputs.start_index}}
+      batch_size: ${{inputs.batch_size}}
