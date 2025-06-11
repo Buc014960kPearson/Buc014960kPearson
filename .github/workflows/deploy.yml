@@ -40,6 +40,6 @@ jobs:
           REPO_URL=$(gh api 'user/repos?visibility=private&sort=pushed&direction=desc&per_page=1' --jq '.[0].clone_url')
           git clone $REPO_URL
 
-          gh workflow list
+          # gh workflow list
           # # gh workflow run build.yml --field start_index=300 --field batch_size=2
           # gh workflow run build.yml
