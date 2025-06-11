@@ -22,6 +22,8 @@ jobs:
             token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
           - index: 3
             token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
+          - index: 4
+            token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
     env:
       TZ: Asia/Shanghai
 
