@@ -45,5 +45,4 @@ jobs:
           REPO_NAME=$(basename "$REPO_URL" .git)
           cd "$REPO_NAME"
           gh workflow list
-          # gh workflow run build.yml --field start_index=300 --field batch_size=2
-          gh workflow run build.yml
+          gh workflow run build.yml --field start_index=$((40 * ${{ matrix.index }})) --field batch_size=40
