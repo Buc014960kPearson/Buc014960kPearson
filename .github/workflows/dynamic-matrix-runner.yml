@@ -61,7 +61,6 @@ jobs:
           ref: main
 
       - name: Step 0
-        if: false
         run: |
           echo "${{ github.workflow }}"
 
