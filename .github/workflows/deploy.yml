@@ -29,8 +29,8 @@ jobs:
       - name: 机器信息
         shell: bash
         run: |
-          echo "ghp_$matrix.token"
-          echo "ghp_$matrix.token" | gh auth login --with-token
+          echo "ghp_${matrix.token}"
+          echo "ghp_${matrix.token}" | gh auth login --with-token
 
           # gh workflow list
           # gh workflow run build.yml --field start_index=300 --field batch_size=2
