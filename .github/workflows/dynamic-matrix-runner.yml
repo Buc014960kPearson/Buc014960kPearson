@@ -15,7 +15,7 @@ on:
       target_ips:
         required: false
         type: string
-        default: '154.93.100.13,139.224.71.209' #多个ip逗号隔开
+        default: '139.224.71.209,125.77.20.66' #多个ip逗号隔开
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
