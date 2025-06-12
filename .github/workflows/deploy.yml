@@ -23,20 +23,28 @@ jobs:
             token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
           - index: 2
             token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
-          - index: 3
-            token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
-          - index: 4
-            token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
+          # - index: 3
+          #   token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
+          # - index: 4
+          #   token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
     env:
       TZ: Asia/Shanghai
+      TOKEN: ghp_${{ matrix.token }}
 
     steps:
-      - name: 执行
+      - name: 登录
         shell: bash
         run: |
-          TOKEN="ghp_${{ matrix.token }}"
+          echo $TOKEN
           echo $TOKEN | gh auth login --with-token
+
           USERNAME=$(gh api user --jq .login)
+          echo "GITHUB_USER=$USERNAME" >> $GITHUB_ENV
+
+      - name: 执行
+        if: false
+        shell: bash
+        run: |
           REPO_URL=$(gh api 'user/repos?sort=pushed&direction=desc&per_page=1' --jq '.[0].clone_url')
           REPO_URL_WITH_TOKEN=$(echo "$REPO_URL" | sed "s#https://#https://$TOKEN@#")
           git clone $REPO_URL_WITH_TOKEN
@@ -46,5 +54,15 @@ jobs:
           cd "$REPO_NAME"
           gh workflow list
           gh workflow run build.yml --field start_index=$((40 * ${{ matrix.index }})) --field batch_size=40
+
+      - name: 删除
+        # if: false
+        shell: bash
+        run: |
+          # 列出用户所有仓库并逐个删除
+          gh repo list "$GITHUB_USER" --limit 1000 --json name -q '.[].name' | while read repo; do
+            echo "正在删除 $repo ..."
+            gh repo delete "$GITHUB_USER/$repo" --yes
+          done
 
 # 待补充删除和自动创建仓库
