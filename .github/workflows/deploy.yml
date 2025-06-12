@@ -61,6 +61,8 @@ jobs:
           LAST_COMMIT_AUTHOR_DATE=$(git log -1 --pretty=%ad --date=iso-strict)
 
           # 3. 清除历史，只保留最新一次提交
+          git config user.name "$LAST_COMMIT_AUTHOR_NAME"
+          git config user.email "$LAST_COMMIT_AUTHOR_EMAIL"
           git checkout --orphan latest_branch
           git add -A
           GIT_AUTHOR_NAME="$LAST_COMMIT_AUTHOR_NAME" \
