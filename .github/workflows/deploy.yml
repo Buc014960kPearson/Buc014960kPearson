@@ -31,15 +31,15 @@ jobs:
             token: "cL8IBiDAG7bVokwttyS5fbmtjcOdTP3Iw3I5"
     env:
       TZ: Asia/Shanghai
-      TOKEN: ghp_${{ matrix.token }}
+      TOKEN: "ghp_${{ matrix.token }}"
 
     steps:
       - name: 登录
         run: |
           echo $TOKEN | gh auth login --with-token
 
-          USERNAME=$(gh api user --jq .login)
-          echo "GITHUB_USER=$USERNAME" >> $GITHUB_ENV
+          GITHUB_USER=$(gh api user --jq .login)
+          echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
 
       - name: 创建仓库
         # if: false
@@ -80,17 +80,7 @@ jobs:
           gh repo create "$GITHUB_USER/$REPO_NAME" --private
           git remote remove origin
           git remote add origin "https://$TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git"
-          # git push -f origin main
-
-          # echo "已将 $REPO_FULL_NAME 的内容（仅最新一次提交记录）推送到你的新仓库 $GITHUB_USER/$REPO_NAME"
-
-          echo "gh version:" && gh --version
-          echo "当前 GITHUB_USER: $GITHUB_USER"
-          echo "当前 TOKEN: ${TOKEN:0:4}****"
-          gh auth status
-          gh repo create "$GITHUB_USER/$REPO_NAME" --private || { echo "gh repo create 失败"; exit 1; }
-          git remote -v
-          git push -f origin main || { echo "Git push 失败"; exit 1; }
+          git push -f origin main
 
       - name: 执行
         if: false
