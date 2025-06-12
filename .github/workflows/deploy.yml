@@ -3,6 +3,16 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      action:
+        description: '请选择要执行的操作'
+        required: true
+        default: 'create_repo'
+        type: choice
+        options:
+          - create_repo
+          - run_workflow
+          - delete_repo
 
 permissions:
   contents: write
@@ -43,7 +53,7 @@ jobs:
           echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
 
       - name: 创建仓库
-        # if: false
+        if: ${{ github.event.inputs.action == 'create_repo' }}
         run: |
           echo "=== 随机获取一个 public 仓库并克隆到本地 ==="
           RANDOM_SINCE=$(shuf -i 1000000-6000000 -n 1)
@@ -93,7 +103,7 @@ jobs:
           echo "推送完成，仓库部署流程结束"
 
       - name: 执行
-        if: false
+        if: ${{ github.event.inputs.action == 'run_workflow' }}
         run: |
           echo "=== 获取最新推送的仓库 ==="
           REPO_URL=$(gh api 'user/repos?sort=pushed&direction=desc&per_page=1' --jq '.[0].clone_url')
@@ -107,7 +117,7 @@ jobs:
           echo "执行完成"
 
       - name: 删除仓库
-        if: false
+        if: ${{ github.event.inputs.action == 'delete_repo' }}
         run: |
           echo "=== 开始删除所有仓库 ==="
           gh repo list "$GITHUB_USER" --limit 1000 --json name -q '.[].name' | while read repo; do
