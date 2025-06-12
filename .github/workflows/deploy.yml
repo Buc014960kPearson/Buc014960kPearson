@@ -62,11 +62,9 @@ jobs:
           LAST_COMMIT_AUTHOR_NAME=$(git log -1 --pretty=%an)
           LAST_COMMIT_AUTHOR_EMAIL=$(git log -1 --pretty=%ae)
           LAST_COMMIT_AUTHOR_DATE=$(git log -1 --pretty=%ad --date=iso-strict)
-          echo "444444444444444444444444444444444444444444444"
 
           # 3. 清除历史，只保留最新一次提交
           git checkout --orphan latest_branch
-          echo "55555555555555555555555555555555555555"
           git add -A
           GIT_AUTHOR_NAME="$LAST_COMMIT_AUTHOR_NAME" \
           GIT_AUTHOR_EMAIL="$LAST_COMMIT_AUTHOR_EMAIL" \
@@ -77,7 +75,6 @@ jobs:
           git commit -m "$LAST_COMMIT_MESSAGE"
           git branch -D main 2>/dev/null
           git branch -m main
-          echo "555555555555555555555555555555555555555"
 
           # 4. 在 GitHub 上新建同名私有仓库，并推送(只保留一条提交记录)
           gh repo create "$GITHUB_USER/$REPO_NAME" --private
