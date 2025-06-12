@@ -49,6 +49,7 @@ jobs:
           echo $TOKEN | gh auth login --with-token
           gh auth status
           echo $GITHUB_REPOSITORY_ID
+          echo $((GITHUB_REPOSITORY_ID - 1000000))
 
           GITHUB_USER=$(gh api user --jq .login)
           echo "GITHUB_USER=$GITHUB_USER" >> $GITHUB_ENV
