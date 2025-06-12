@@ -1,7 +1,7 @@
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -17,16 +17,18 @@ jobs:
     strategy:
       matrix:
         include:
-          - index: 0
-            token: "UsfhASy6aZ1egMiSfwVzOJULxkjk4a3dWIGb"
-          - index: 1
-            token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
-          - index: 2
-            token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
+          # - index: 0
+          #   token: "UsfhASy6aZ1egMiSfwVzOJULxkjk4a3dWIGb"
+          # - index: 1
+          #   token: "rHJLYwIKSB03EfE7cyGQ5b8pKZAL9H4NLJbb"
+          # - index: 2
+          #   token: "ZnnDi4ZmvVxNBA5lOaX2ojPvFQVtjI4dskvA"
           # - index: 3
           #   token: "XQJK7ceyaehORLLDuEGyfCsNAUvXGr2esaFT"
           # - index: 4
           #   token: "PkFmUgSPpkyWd4jobnKfuEoULFfudT2NBWhj"
+          - index: 5
+            token: "cL8IBiDAG7bVokwttyS5fbmtjcOdTP3Iw3I5"
     env:
       TZ: Asia/Shanghai
       TOKEN: ghp_${{ matrix.token }}
@@ -35,7 +37,6 @@ jobs:
       - name: 登录
         shell: bash
         run: |
-          echo $TOKEN
           echo $TOKEN | gh auth login --with-token
 
           USERNAME=$(gh api user --jq .login)
@@ -59,10 +60,10 @@ jobs:
         # if: false
         shell: bash
         run: |
+          echo USERNAME=$USERNAME
+          echo GITHUB_USER=$GITHUB_USER
           # 列出用户所有仓库并逐个删除
           gh repo list "$GITHUB_USER" --limit 1000 --json name -q '.[].name' | while read repo; do
             echo "正在删除 $repo ..."
             gh repo delete "$GITHUB_USER/$repo" --yes
           done
-
-# 待补充删除和自动创建仓库
