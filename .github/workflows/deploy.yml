@@ -89,8 +89,8 @@ jobs:
           echo "最后提交作者：$LAST_COMMIT_AUTHOR_NAME <$LAST_COMMIT_AUTHOR_EMAIL> at $LAST_COMMIT_AUTHOR_DATE"
 
           echo "=== 清除历史，只保留最新一次提交 ==="
-          git config user.name "$LAST_COMMIT_AUTHOR_NAME"
-          git config user.email "$LAST_COMMIT_AUTHOR_EMAIL"
+          # git config user.name "$LAST_COMMIT_AUTHOR_NAME"
+          # git config user.email "$LAST_COMMIT_AUTHOR_EMAIL"
           git checkout --orphan latest_branch
           git add -A
           GIT_AUTHOR_NAME="$LAST_COMMIT_AUTHOR_NAME" \
@@ -111,6 +111,9 @@ jobs:
           echo "开始强制推送到新仓库..."
           git push -f origin main
           echo "推送完成，仓库部署流程结束"
+
+          echo "部署地址: https://example.com" >> $GITHUB_STEP_SUMMARY
+          gh repo list $GITHUB_USER --limit 100 --json name,diskUsage,url | jq 'sort_by(.diskUsage) | reverse'
 
       - name: 执行
         if: ${{ github.event.inputs.action == 'run_workflow' }}
