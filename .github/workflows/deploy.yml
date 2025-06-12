@@ -46,6 +46,7 @@ jobs:
         run: |
           # 1. 随机获取一个 public 仓库并克隆到本地
           RANDOM_SINCE=$(shuf -i 1000000-6000000 -n 1)
+          echo RANDOM_SINCE=$RANDOM_SINCE
           REPO_API="https://api.github.com/repositories?since=${RANDOM_SINCE}"
           REPO_JSON=$(curl -s "$REPO_API")
           REPO_FULL_NAME=$(echo "$REPO_JSON" | jq -r '.[0].full_name')
