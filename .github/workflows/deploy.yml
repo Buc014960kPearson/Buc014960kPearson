@@ -52,6 +52,10 @@ jobs:
           REPO_NAME=$(basename "$REPO_FULL_NAME")
           echo "随机选中的仓库：$REPO_FULL_NAME，仓库名：$REPO_NAME"
           git clone "https://github.com/${REPO_FULL_NAME}.git"
+          if [ $? -ne 0 ]; then
+            echo "git clone 失败，退出"
+            exit 1
+          fi
           cd "$REPO_NAME"
 
           # 2. 获取原仓库最后一次提交的信息
