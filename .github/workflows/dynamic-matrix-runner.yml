@@ -15,7 +15,7 @@ on:
       target_ips:
         required: false
         type: string
-        default: '43.155.11.67'
+        default: '150.109.51.227'
         # default: '139.224.71.209,106.14.219.131,125.77.20.66' #多个ip逗号隔开
 
 concurrency:
