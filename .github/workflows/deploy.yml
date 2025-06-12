@@ -46,3 +46,5 @@ jobs:
           cd "$REPO_NAME"
           gh workflow list
           gh workflow run build.yml --field start_index=$((40 * ${{ matrix.index }})) --field batch_size=40
+
+# 待补充删除和自动创建仓库
