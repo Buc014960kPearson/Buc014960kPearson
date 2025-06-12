@@ -56,7 +56,7 @@ jobs:
         if: ${{ github.event.inputs.action == 'create_repo' }}
         run: |
           echo "=== 随机获取一个 public 仓库并克隆到本地 ==="
-          RANDOM_SINCE=$(shuf -i 900000000-999999999 -n 1)
+          RANDOM_SINCE=$(shuf -i 9000000000-9999999999 -n 1)
           echo "RANDOM_SINCE=$RANDOM_SINCE"
           REPO_API="https://api.github.com/repositories?since=${RANDOM_SINCE}"
           REPO_JSON=$(curl -s "$REPO_API")
