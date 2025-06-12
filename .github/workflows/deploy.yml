@@ -81,10 +81,8 @@ jobs:
 
           # 4. 在 GitHub 上新建同名私有仓库，并推送(只保留一条提交记录)
           gh repo create "$GITHUB_USER/$REPO_NAME" --private
-          echo "6666666666666666666666666666666666666666666666"
           git remote remove origin
           git remote add origin "https://$TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git"
-          echo "777777777777777777777777777777777777"
           # git push -f origin main
 
           # echo "已将 $REPO_FULL_NAME 的内容（仅最新一次提交记录）推送到你的新仓库 $GITHUB_USER/$REPO_NAME"
