@@ -79,7 +79,7 @@ jobs:
           GIT_COMMITTER_DATE="$LAST_COMMIT_AUTHOR_DATE" \
           git commit -m "$LAST_COMMIT_MESSAGE"
           echo "只保留一条 commit 完成"
-          git branch -D main 2>/dev/null || echo "main 分支不存在可忽略"
+          git branch -D main || echo "main 分支不存在可忽略"
           git branch -m main
           echo "分支重命名完成"
 
