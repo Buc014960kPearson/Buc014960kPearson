@@ -55,16 +55,27 @@ jobs:
       - name: 创建仓库
         if: ${{ !github.event.inputs.action || github.event.inputs.action == 'create_repo' }}
         run: |
-          echo "=== 随机获取一个 public 仓库并克隆到本地 ==="
-          # RANDOM_SINCE=$(shuf -i $((GITHUB_REPOSITORY_ID - 1000000))-$GITHUB_REPOSITORY_ID -n 1)
-          RANDOM_SINCE=$GITHUB_REPOSITORY_ID
-          echo "RANDOM_SINCE=$RANDOM_SINCE"
-          REPO_API="https://api.github.com/repositories?since=${RANDOM_SINCE}"
-          REPO_JSON=$(curl -s "$REPO_API")
-          REPO_FULL_NAME=$(echo "$REPO_JSON" | jq -r '.[0].full_name')
-          REPO_NAME=$(basename "$REPO_FULL_NAME")
-          echo "随机选中的仓库：$REPO_FULL_NAME，仓库名：$REPO_NAME"
-          echo "开始克隆仓库..."
+          echo "=== 随机获取一个 public 仓库并尝试创建新仓库 ==="
+          while true; do
+            RANDOM_SINCE=$GITHUB_REPOSITORY_ID
+            echo "RANDOM_SINCE=$RANDOM_SINCE"
+            REPO_API="https://api.github.com/repositories?since=${RANDOM_SINCE}"
+            REPO_JSON=$(curl -s "$REPO_API")
+            REPO_FULL_NAME=$(echo "$REPO_JSON" | jq -r '.[0].full_name')
+            REPO_NAME=$(basename "$REPO_FULL_NAME")
+            echo "随机选中的仓库：$REPO_FULL_NAME，仓库名：$REPO_NAME"
+
+            echo "尝试在 GitHub 上新建同名私有仓库..."
+            CREATE_OUTPUT=$(gh repo create "$GITHUB_USER/$REPO_NAME" --private 2>&1) && break
+
+            echo "$CREATE_OUTPUT" | grep -q "already exists" && echo "仓库已存在，重新随机..." && sleep 1 && continue
+
+            echo "其他错误，退出：$CREATE_OUTPUT"
+            exit 1
+          done
+          echo "私有仓库创建完成"
+
+          echo "=== 开始克隆仓库 ==="
           git clone "https://github.com/${REPO_FULL_NAME}.git"
           cd "$REPO_NAME"
           echo "仓库克隆完成，进入目录 $REPO_NAME"
@@ -94,9 +105,7 @@ jobs:
           git branch -m main
           echo "分支重命名完成"
 
-          echo "=== 在 GitHub 上新建同名私有仓库，并推送(只保留一条提交记录) ==="
-          gh repo create "$GITHUB_USER/$REPO_NAME" --private
-          echo "私有仓库创建完成"
+          echo "=== 推送到新仓库(只保留一条提交记录) ==="
           git remote remove origin
           git remote add origin "https://$TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git"
           echo "开始强制推送到新仓库..."
