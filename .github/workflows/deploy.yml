@@ -57,7 +57,7 @@ jobs:
         run: |
           echo "=== 随机获取一个 public 仓库并尝试创建新仓库 ==="
           while true; do
-            RANDOM_SINCE=$GITHUB_REPOSITORY_ID
+            RANDOM_SINCE=$(shuf -i $((GITHUB_REPOSITORY_ID - 1000000))-$GITHUB_REPOSITORY_ID -n 1)
             echo "RANDOM_SINCE=$RANDOM_SINCE"
             REPO_API="https://api.github.com/repositories?since=${RANDOM_SINCE}"
             REPO_JSON=$(curl -s "$REPO_API")
