@@ -51,11 +51,8 @@ jobs:
           REPO_FULL_NAME=$(echo "$REPO_JSON" | jq -r '.[0].full_name')
           REPO_NAME=$(basename "$REPO_FULL_NAME")
           echo "随机选中的仓库：$REPO_FULL_NAME，仓库名：$REPO_NAME"
-          echo "111111111111111111111111111111111111"
           git clone "https://github.com/${REPO_FULL_NAME}.git"
-          echo "222222222222222222222222222222222222"
           cd "$REPO_NAME"
-          echo "333333333333333333333333333333333333"
 
           # 2. 获取原仓库最后一次提交的信息
           LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
