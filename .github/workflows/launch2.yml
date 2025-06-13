@@ -1,0 +1,146 @@
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  job:
+    runs-on: windows-latest
+    # runs-on: ubuntu-latest
+    # runs-on: macos-latest
+    strategy:
+      matrix:
+        job_id: [2]
+    env:
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: Write to frpc.toml
+        shell: bash
+        run: |
+          cat << EOF > frpc.toml
+          user = "VirtualMachine"
+
+          serverAddr = "70.36.96.43"
+          serverPort = 7000
+          loginFailExit = true
+
+          auth.method = "token"
+          auth.token = "2f1d3a0e-9b64-4b91-b76b-8cb4a2f2e5d3"
+
+
+          [[proxies]]
+          name = "rdp${{ matrix.job_id }}"
+          type = "tcp"
+          localIP = "127.0.0.1"
+          localPort = 1234
+          remotePort = $((9000 + ${{ matrix.job_id }}))
+          EOF
+
+      - name: 运行容器 - Windows
+        if: ${{ runner.os == 'Windows' }}
+        # shell: cmd
+        run: |
+          net user runneradmin mynewpassword@112233
+
+          netsh interface portproxy add v4tov4 listenport=1234 listenaddress=0.0.0.0 connectport=3389 connectaddress=127.0.0.1
+          Start-Process -FilePath "frpc" -ArgumentList "-c frpc.toml" -NoNewWindow
+
+          $originalPath = Get-Location
+          Set-Location -Path C:\Users\runneradmin\Downloads
+
+          # curl -L -o sogou_pinyin_guanwang_15.4b.exe "https://drive.usercontent.google.com/download?id=1ibp-pCUmr5z7OmA0GDimJuRR4mDQqMx8&export=download&confirm=t&uuid=8c6842c9-bd7c-4e2f-acee-17f5832568e6"
+          # curl -L -o "Install Termius.exe" https://autoupdate.termius.com/windows/Install%20Termius.exe
+          # curl -L -o rustdesk-1.3.9-x86_64.exe https://github.com/rustdesk/rustdesk/releases/download/1.3.9/rustdesk-1.3.9-x86_64.exe
+          # curl -L -o VSCodeUserSetup-x64-1.99.3.exe https://update.code.visualstudio.com/latest/win32-x64-user/stable
+
+          # # 下载 SmartGit ZIP 文件
+          # $url = "https://www.syntevo.com/downloads/smartgit/smartgit-win-24_1_2.zip"
+          # $output = "smartgit.zip"
+          # curl -L -o $output $url
+      
+          # # 解压 ZIP 文件
+          # Expand-Archive -Path $output -DestinationPath "smartgit_temp" -Force
+      
+          # # 查找 .exe 文件（假设是安装程序）
+          # $installer = Get-ChildItem -Path "smartgit_temp" -Recurse -Include "*.exe" | Where-Object { $_.Name -like "smartgit*.exe" } | Select-Object -First 1
+          # if (-not $installer) {
+          #   Write-Error "No SmartGit installer (.exe) found in smartgit_temp"
+          #   exit 1
+          # }
+      
+          # # 执行静默安装
+          # Start-Process -FilePath $installer.FullName -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART" -Wait
+      
+          # # 清理临时文件
+          # Remove-Item $output
+          # Remove-Item "smartgit_temp" -Recurse -Force
+
+          Set-Location -Path $originalPath
+
+          # timeout /t -1
+          Start-Sleep -Seconds 86400
+
+      - name: 运行容器 - Linux
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          # curl -L "https://github.com/docker/compose/releases/download/v2.24.7/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          # chmod +x /usr/local/bin/docker-compose
+
+          docker run -d \
+            --restart always \
+            -p 8388:8388/tcp \
+            -p 8388:8388/udp \
+            -e TZ=Asia/Shanghai \
+            -e METHOD=aes-256-gcm \
+            -e PASSWORD=6a17a5dd-5f76-4b09-b567-9b0d5d449da5 \
+            shadowsocks/shadowsocks-libev
+
+          echo "ss://$(echo -n "aes-256-gcm:6a17a5dd-5f76-4b09-b567-9b0d5d449da5@$(curl -s ifconfig.me):8388" | base64 -w 0)#未命名"
+
+          echo "runner:mynewpassword" | sudo chpasswd
+          docker run -d -p 1234:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:22
+          docker run -d -p 1235:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:2222
+          docker run -d --name frpc -v ./frpc.toml:/etc/frp/frpc.toml snowdreamtech/frpc
+          
+          docker logs -f frpc
+
+      # - name: 安装图形界面
+      #   if: ${{ runner.os == 'Linux' }}
+      #   run: |
+      #     start_time=$(date +%s)
+
+      #     docker run -d -p 1236:1234 --restart=always alpine/socat TCP-LISTEN:1234,fork TCP:172.17.0.1:3389
+      #     sudo apt update
+      #     sudo apt install xrdp -y
+
+      #     sudo apt install xfce4 xfce4-goodies -y
+      #     echo xfce4-session > ~/.xsession
+
+      #     # sudo apt install lxqt -y
+      #     # echo "startlxqt" > ~/.xsession
+
+      #     sudo systemctl enable xrdp
+      #     sudo systemctl start xrdp
+
+      #     end_time=$(date +%s)
+      #     total_time=$(echo "scale=1; ($end_time - $start_time) / 60" | bc)
+
+      #     echo "总耗时: $total_time 分钟"
+
+      #     docker logs -f frpc
+
+      - name: 运行容器 - macOS
+        if: ${{ runner.os == 'macOS' }}
+        run: |
+          echo "Running on macOS"
+          curl ipinfo.io
+          # 在此添加 macOS 特定的命令
